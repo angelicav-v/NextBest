@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import '../widgets/gradient_background.dart';
 import 'login_screen.dart';
 import 'location_screen.dart';
+import '../app_navigator.dart';
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+  const SignupScreen({Key? key}) : super(key: key);
 
   @override
   State<SignupScreen> createState() => _SignupScreenState();
@@ -58,24 +59,37 @@ class _SignupScreenState extends State<SignupScreen> {
       return;
     }
     
-    // If validation passes, navigate to location screen
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const LocationScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset.zero;
-          const curve = Curves.ease;
-          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 500),
-      ),
+    // Save signup data before navigating
+    _saveSignupAndNavigate();
+  }
+
+  Future<void> _saveSignupAndNavigate() async {
+    // Save signup info
+    await AuthManager.saveLoginData(
+      username: _usernameController.text,
+      email: _emailController.text,
     );
+
+    // Navigate to location screen
+    if (mounted) {
+      Navigator.of(context).push(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const LocationScreen(showPopupOnHomeScreen: true),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.ease;
+            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 500),
+        ),
+      );
+    }
   }
 
   void _handleSignIn() {
@@ -197,7 +211,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   Text(
                     'Join NextBest today',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 13,
                       fontWeight: FontWeight.w300,
                       color: Colors.grey.shade500,
                       letterSpacing: 0.3,
@@ -211,7 +225,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       const Text(
                         'Username',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           color: Colors.white,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 0.2,
@@ -271,7 +285,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       const Text(
                         'Email',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           color: Colors.white,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 0.2,
@@ -332,7 +346,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       const Text(
                         'Phone Number',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           color: Colors.white,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 0.2,
@@ -393,7 +407,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       const Text(
                         'Password',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           color: Colors.white,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 0.2,
@@ -497,7 +511,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               'Create Account',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 16,
+                                fontSize: 15,
                                 fontWeight: FontWeight.w500,
                                 letterSpacing: 0.3,
                               ),
@@ -516,7 +530,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         'Already have an account?',
                         style: TextStyle(
                           color: Colors.grey.shade600,
-                          fontSize: 15,
+                          fontSize: 14,
                           fontWeight: FontWeight.w300,
                           letterSpacing: 0.2,
                         ),
@@ -531,7 +545,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           'Sign in',
                           style: TextStyle(
                             color: Color(0xFFB366FF),
-                            fontSize: 15,
+                            fontSize: 14,
                             fontWeight: FontWeight.w400,
                             letterSpacing: 0.2,
                           ),

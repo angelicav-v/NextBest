@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import '../widgets/gradient_background.dart';
+import 'home_screen.dart';
+import '../app_navigator.dart';
 
 class LocationScreen extends StatefulWidget {
-  const LocationScreen({Key? key}) : super(key: key);
+  final bool showPopupOnHomeScreen;
+
+  const LocationScreen({
+    Key? key,
+    this.showPopupOnHomeScreen = false,
+  }) : super(key: key);
 
   @override
   State<LocationScreen> createState() => _LocationScreenState();
@@ -59,11 +66,43 @@ class _LocationScreenState extends State<LocationScreen> {
         print('Latitude: ${position.latitude}');
         print('Longitude: ${position.longitude}');
 
-        // Show success message
+        // Save location data
+        await AuthManager.saveLocationData(
+          latitude: position.latitude,
+          longitude: position.longitude,
+        );
+
+        // Show success message briefly, then navigate
         _showSuccessDialog(
           'Location Access Granted',
           'Your location has been obtained and saved',
         );
+
+        // Navigate to home screen after a short delay
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) {
+          Navigator.of(context).push(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  HomeScreen(
+                    latitude: position.latitude,
+                    longitude: position.longitude,
+                    showInfoPopup: widget.showPopupOnHomeScreen,
+                  ),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                const begin = Offset(1.0, 0.0);
+                const end = Offset.zero;
+                const curve = Curves.ease;
+                var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                return SlideTransition(
+                  position: animation.drive(tween),
+                  child: child,
+                );
+              },
+              transitionDuration: const Duration(milliseconds: 500),
+            ),
+          );
+        }
       }
     } catch (e) {
       _showErrorDialog('Error', 'Failed to get location: $e');
@@ -73,6 +112,7 @@ class _LocationScreenState extends State<LocationScreen> {
       });
     }
   }
+
   void _showErrorDialog(String title, String message) {
     showDialog(
       context: context,

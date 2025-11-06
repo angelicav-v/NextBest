@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
-import 'screens/loading_screen.dart';
+import 'app_navigator.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const NextBestApp());
 }
 
 class NextBestApp extends StatelessWidget {
-  const NextBestApp({super.key});
-
+  const NextBestApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'NextBest',
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: Colors.black,
-        fontFamily: 'SF Pro',
-      ),
-      home: const LoadingScreen(),
+      theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
+      home: const AppNavigator(),
     );
   }
 }
