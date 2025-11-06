@@ -124,15 +124,15 @@ class _LoadingScreenState extends State<LoadingScreen>
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: const Color(0xFF333333),
-                                width: 1,
+                                color: const Color(0xFFD946EF),
+                                width: 0.75,
                               ),
                             ),
                             child: Center(
                               child: Image.asset(
                                 'assets/images/nextbest_logo.png',
-                                width: 60,
-                                height: 60,
+                                width: 100,
+                                height: 100,
                               ),
                             ),
                           ),

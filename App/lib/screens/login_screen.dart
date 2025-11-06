@@ -58,20 +58,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: Center(
                       child: Container(
-                        width: 65,
-                        height: 65,
+                        width: 80,
+                        height: 80,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: const Color(0xFF333333),
-                            width: 1,
+                            color: const Color(0xFFD946EF),
+                            width: 0.75,
                           ),
                         ),
                         child: Center(
                           child: Image.asset(
                             'assets/images/nextbest_logo.png',
-                            width: 40,
-                            height: 40,
+                            width: 75,
+                            height: 75,
                           ),
                         ),
                       ),
