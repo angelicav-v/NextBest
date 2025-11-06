@@ -12,7 +12,7 @@ class NextBestApp extends StatelessWidget {
     return MaterialApp(
       title: 'NextBest',
       debugShowCheckedModeBanner: false,
-      theme: new ThemeData(scaffoldBackgroundColor: const Color(( 0xFF6A1B9A)),),
+      theme: ThemeData(scaffoldBackgroundColor: const Color(( 0xFF6A1B9A)),),
       home: const HomePage(),
     );
   }
