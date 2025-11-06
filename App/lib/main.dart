@@ -7,7 +7,7 @@ void main() async {
 }
 
 class NextBestApp extends StatelessWidget {
-  const NextBestApp({Key? key}) : super(key: key);
+  const NextBestApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

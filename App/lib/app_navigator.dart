@@ -5,7 +5,7 @@ import 'screens/location_screen.dart';
 import 'screens/home_screen.dart';
 
 class AppNavigator extends StatefulWidget {
-  const AppNavigator({Key? key}) : super(key: key);
+  const AppNavigator({super.key});
 
   @override
   State<AppNavigator> createState() => _AppNavigatorState();

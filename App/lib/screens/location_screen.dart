@@ -8,9 +8,9 @@ class LocationScreen extends StatefulWidget {
   final bool showPopupOnHomeScreen;
 
   const LocationScreen({
-    Key? key,
+    super.key,
     this.showPopupOnHomeScreen = false,
-  }) : super(key: key);
+  });
 
   @override
   State<LocationScreen> createState() => _LocationScreenState();

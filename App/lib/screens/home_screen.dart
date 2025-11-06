@@ -8,11 +8,11 @@ class HomeScreen extends StatefulWidget {
   final bool showInfoPopup;
 
   const HomeScreen({
-    Key? key,
+    super.key,
     required this.latitude,
     required this.longitude,
     this.showInfoPopup = false,
-  }) : super(key: key);
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
