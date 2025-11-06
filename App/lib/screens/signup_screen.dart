@@ -27,7 +27,38 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   void _handleCreateAccount() {
-    // Navigate to location screen with smooth slide transition
+    // Validation checks
+    if (_usernameController.text.isEmpty) {
+      _showErrorDialog('Username Required', 'Please choose a username');
+      return;
+    }
+    
+    if (_emailController.text.isEmpty) {
+      _showErrorDialog('Email Required', 'Please enter your email');
+      return;
+    }
+    
+    if (!_isValidEmail(_emailController.text)) {
+      _showErrorDialog('Invalid Email', 'Please enter a valid email address');
+      return;
+    }
+    
+    if (_phoneController.text.isEmpty) {
+      _showErrorDialog('Phone Required', 'Please enter your phone number');
+      return;
+    }
+    
+    if (_passwordController.text.isEmpty) {
+      _showErrorDialog('Password Required', 'Please create a password');
+      return;
+    }
+    
+    if (_passwordController.text.length < 6) {
+      _showErrorDialog('Weak Password', 'Password must be at least 6 characters');
+      return;
+    }
+    
+    // If validation passes, navigate to location screen
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
@@ -62,6 +93,47 @@ class _SignupScreenState extends State<SignupScreen> {
         transitionDuration: const Duration(milliseconds: 400),
       ),
     );
+  }
+
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          backgroundColor: const Color(0xFF1A1A1A),
+          titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+          contentTextStyle: const TextStyle(
+            color: Colors.white70,
+            fontSize: 14,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                'OK',
+                style: TextStyle(
+                  color: Color(0xFFB366FF),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  bool _isValidEmail(String email) {
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
+    return emailRegex.hasMatch(email);
   }
 
   @override
@@ -125,7 +197,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   Text(
                     'Join NextBest today',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 16,
                       fontWeight: FontWeight.w300,
                       color: Colors.grey.shade500,
                       letterSpacing: 0.3,
@@ -157,7 +229,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           hintText: 'Choose a username',
                           hintStyle: TextStyle(
                             color: Colors.grey.shade700,
-                            fontSize: 15,
+                            fontSize: 14,
                             fontWeight: FontWeight.w300,
                           ),
                           filled: true,
@@ -218,7 +290,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           hintText: 'Enter your email',
                           hintStyle: TextStyle(
                             color: Colors.grey.shade700,
-                            fontSize: 15,
+                            fontSize: 14,
                             fontWeight: FontWeight.w300,
                           ),
                           filled: true,
@@ -279,7 +351,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           hintText: '+1 (912) 555-0123',
                           hintStyle: TextStyle(
                             color: Colors.grey.shade700,
-                            fontSize: 15,
+                            fontSize: 14,
                             fontWeight: FontWeight.w300,
                           ),
                           filled: true,
@@ -340,7 +412,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           hintText: 'Create a password',
                           hintStyle: TextStyle(
                             color: Colors.grey.shade700,
-                            fontSize: 15,
+                            fontSize: 14,
                             fontWeight: FontWeight.w300,
                           ),
                           filled: true,

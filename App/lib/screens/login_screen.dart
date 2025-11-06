@@ -23,7 +23,18 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _handleSignIn() {
-    // Navigate to location screen with smooth slide transition
+    // Validation check
+    if (_usernameController.text.isEmpty) {
+      _showErrorDialog('Username Required', 'Please enter your username');
+      return;
+    }
+    
+    if (_passwordController.text.isEmpty) {
+      _showErrorDialog('Password Required', 'Please enter your password');
+      return;
+    }
+    
+    // If validation passes, navigate to location screen
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
@@ -57,6 +68,40 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         transitionDuration: const Duration(milliseconds: 400),
       ),
+    );
+  }
+
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          backgroundColor: const Color(0xFF1A1A1A),
+          titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+          contentTextStyle: const TextStyle(
+            color: Colors.white70,
+            fontSize: 14,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                'OK',
+                style: TextStyle(
+                  color: Color(0xFFB366FF),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -122,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     'Sign in to continue to NextBest',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 16,
                       fontWeight: FontWeight.w300,
                       color: Colors.grey.shade500,
                       letterSpacing: 0.3,
