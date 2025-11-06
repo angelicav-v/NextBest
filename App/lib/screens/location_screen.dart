@@ -14,6 +14,11 @@ class _LocationScreenState extends State<LocationScreen> {
     print('Location access allowed');
   }
 
+  void _handleNotNow() {
+    // Handle skip location logic here
+    print('Location access declined');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -208,7 +213,7 @@ class _LocationScreenState extends State<LocationScreen> {
           child: Text(
             text,
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.w300,
               color: Colors.white,
               letterSpacing: 0.2,
