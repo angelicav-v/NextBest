@@ -203,7 +203,7 @@ class _LocationScreenState extends State<LocationScreen> {
                     
                     // welcome text
                     const Text(
-                      'Welcome to Statesboro!',
+                      'Welcome to NextBest!',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w400,
@@ -215,10 +215,10 @@ class _LocationScreenState extends State<LocationScreen> {
                     
                     // description
                     Text(
-                      'Discover the best experiences\nStatesboro, Georgia has to offer',
+                      'Discover the best experiences\nyour area has to offer',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 15,
                         fontWeight: FontWeight.w300,
                         color: Colors.grey.shade500,
                         letterSpacing: 0.3,
@@ -321,12 +321,12 @@ class _LocationScreenState extends State<LocationScreen> {
       children: [
         _buildFeatureItem(
           icon: Icons.location_on_outlined,
-          text: 'Find amazing places in Statesboro',
+          text: 'Find amazing places near you',
         ),
         const SizedBox(height: 20),
         _buildFeatureItem(
           icon: Icons.location_on_outlined,
-          text: 'Get personalized\nlocal\nrecommendations',
+          text: 'Get personalized local recommendations',
         ),
         const SizedBox(height: 20),
         _buildFeatureItem(
