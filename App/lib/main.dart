@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'app_navigator.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'screens/loading_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -8,13 +9,17 @@ void main() async {
 
 class NextBestApp extends StatelessWidget {
   const NextBestApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'NextBest',
-      theme: ThemeData.dark(),
+      theme: ThemeData.dark().copyWith(
+        // applies Arimo font to all text in the app
+        textTheme: GoogleFonts.arimoTextTheme(ThemeData.dark().textTheme),
+      ),
       debugShowCheckedModeBanner: false,
-      home: const AppNavigator(),
+      home: const LoadingScreen(),
     );
   }
 }

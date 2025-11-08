@@ -24,29 +24,30 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _handleSignIn() {
-    // Validation check
+    // check if username is filled
     if (_usernameController.text.isEmpty) {
       _showErrorDialog('Username Required', 'Please enter your username');
       return;
     }
     
+    // check if password is filled
     if (_passwordController.text.isEmpty) {
       _showErrorDialog('Password Required', 'Please enter your password');
       return;
     }
     
-    // Save login data before navigating
+    // save data and go to next screen
     _saveLoginAndNavigate();
   }
 
   Future<void> _saveLoginAndNavigate() async {
-    // Save login info
+    // save login info
     await AuthManager.saveLoginData(
       username: _usernameController.text,
       email: '', // You can add email field if needed
     );
 
-    // Navigate to location screen
+    // navigate to location screen
     if (mounted) {
       Navigator.of(context).push(
         PageRouteBuilder(
@@ -69,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _handleSignUp() {
-    // Navigate to signup screen with smooth transition
+    // navigate to signup screen with smooth transition
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
@@ -137,10 +138,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 120,
                     decoration: BoxDecoration(
                       color: const Color(0xFF0D0D0D),
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(15),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF8B3DFF).withOpacity(0.4),
+                          color: const Color(0xFFA855F7).withValues(alpha: 0.75),
                           blurRadius: 50,
                           spreadRadius: 8,
                         ),
@@ -168,23 +169,37 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  const Text(
-                    'Welcome!',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFFD4AFFF),
-                      letterSpacing: 0.5,
+                  ShaderMask(
+                    shaderCallback: (bounds) => const LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Color(0xFFC27AFF),
+                        Color(0xFFED6AFF),
+                      ],
+                      stops: [0.0, 1.0],
+                    ).createShader(bounds),
+                    child: const Text(
+                      'Welcome!',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 24,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     'Sign in to continue to NextBest',
-                    style: TextStyle(
-                      fontSize: 13,
+                    style: const TextStyle(
+                      fontSize: 16,
                       fontWeight: FontWeight.w300,
-                      color: Colors.grey.shade500,
+                      color: Color(0xFFDAB2FF),
                       letterSpacing: 0.3,
+                    ).copyWith(
+                      color: const Color(0xFFDAB2FF).withValues(alpha: 0.6),
                     ),
                   ),
                   const SizedBox(height: 50),
@@ -211,32 +226,40 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         decoration: InputDecoration(
                           hintText: 'Enter your username',
-                          hintStyle: TextStyle(
-                            color: Colors.grey.shade700,
+                          hintStyle: const TextStyle(
+                            color: Color(0xFFDAB2FF),
                             fontSize: 14,
                             fontWeight: FontWeight.w300,
+                          ).copyWith(
+                            color: const Color(0xFFDAB2FF).withValues(alpha: 0.3),
                           ),
                           filled: true,
-                          fillColor: Colors.transparent,
+                          fillColor: const Color(0xFF000000).withValues(alpha: 0.4),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: Colors.grey.shade800,
+                            borderSide: const BorderSide(
+                              color: Color(0xFFAD46FF),
                               width: 1,
+                            ).copyWith(
+                              color: const Color(0xFFAD46FF).withValues(alpha: 0.3),
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: Colors.grey.shade800,
+                            borderSide: const BorderSide(
+                              color: Color(0xFFAD46FF),
                               width: 1,
+                            ).copyWith(
+                              color: const Color(0xFFAD46FF).withValues(alpha: 0.3),
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: const BorderSide(
-                              color: Color(0xFFB366FF),
+                              color: Color(0xFFAD46FF),
                               width: 1.5,
+                            ).copyWith(
+                              color: const Color(0xFFAD46FF).withValues(alpha: 0.3),
                             ),
                           ),
                           contentPadding: const EdgeInsets.symmetric(
@@ -272,32 +295,40 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         decoration: InputDecoration(
                           hintText: 'Enter your password',
-                          hintStyle: TextStyle(
-                            color: Colors.grey.shade700,
+                          hintStyle: const TextStyle(
+                            color: Color(0xFFDAB2FF),
                             fontSize: 14,
                             fontWeight: FontWeight.w300,
+                          ).copyWith(
+                            color: const Color(0xFFDAB2FF).withValues(alpha: 0.3),
                           ),
                           filled: true,
-                          fillColor: Colors.transparent,
+                          fillColor: const Color(0xFF000000).withValues(alpha: 0.4),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: Colors.grey.shade800,
+                            borderSide: const BorderSide(
+                              color: Color(0xFFAD46FF),
                               width: 1,
+                            ).copyWith(
+                              color: const Color(0xFFAD46FF).withValues(alpha: 0.3),
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: Colors.grey.shade800,
+                            borderSide: const BorderSide(
+                              color: Color(0xFFAD46FF),
                               width: 1,
+                            ).copyWith(
+                              color: const Color(0xFFAD46FF).withValues(alpha: 0.3),
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: const BorderSide(
-                              color: Color(0xFFB366FF),
+                              color: Color(0xFFAD46FF),
                               width: 1.5,
+                            ).copyWith(
+                              color: const Color(0xFFAD46FF).withValues(alpha: 0.3),
                             ),
                           ),
                           contentPadding: const EdgeInsets.symmetric(
@@ -337,13 +368,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           begin: Alignment.centerLeft,
                           end: Alignment.centerRight,
                           colors: [
-                            Color(0xFF9D00FF),
-                            Color(0xFFB300FF),
+                            Color(0xFF9810FA),
+                            Color(0xFFC800DE),
                           ],
+                          stops: [0.0, 1.0],
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF9D00FF).withOpacity(0.5),
+                            color: const Color(0xFF9810FA).withValues(alpha: 0.5),
                             blurRadius: 16,
                             offset: const Offset(0, 4),
                           ),

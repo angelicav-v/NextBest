@@ -20,19 +20,20 @@ class _AppNavigatorState extends State<AppNavigator> {
     _initialScreen = _determineInitialScreen();
   }
 
+  // figures out which screen to show when app starts
   Future<Widget> _determineInitialScreen() async {
     final prefs = await SharedPreferences.getInstance();
     
-    // Check if user is logged in
+    // check if user is logged in
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
     
-    // Check if location was already granted
+    // check if location was already granted
     bool locationGranted = prefs.getBool('locationGranted') ?? false;
     
-    // Check if user has seen the info popup
+    // check if user has seen the info popup
     bool infoPopupSeen = prefs.getBool('infoPopupSeen') ?? false;
     
-    // Get stored location
+    // get stored location coordinates
     double? latitude = prefs.containsKey('userLatitude') 
         ? double.tryParse(prefs.getString('userLatitude') ?? '') 
         : null;
@@ -44,18 +45,18 @@ class _AppNavigatorState extends State<AppNavigator> {
     print('locationGranted: $locationGranted');
     print('infoPopupSeen: $infoPopupSeen');
 
-    // Logic:
-    // 1. If NOT logged in → Show Login Screen
+    // logic for determining which screen
+    // 1. if NOT logged in → show login screen
     if (!isLoggedIn) {
       return const LoginScreen();
     }
     
-    // 2. If logged in but NO location → Show Location Screen
+    // 2. if logged in but NO location → show location screen
     if (!locationGranted) {
       return const LocationScreen(showPopupOnHomeScreen: true);
     }
     
-    // 3. If logged in AND location granted → Show Home Screen
+    // 3. if logged in AND location granted → show home screen
     // (popup will show automatically on first visit)
     if (latitude != null && longitude != null) {
       return HomeScreen(
@@ -65,7 +66,7 @@ class _AppNavigatorState extends State<AppNavigator> {
       );
     }
     
-    // Fallback to login
+    // fallback to login if something went wrong
     return const LoginScreen();
   }
 
@@ -75,7 +76,7 @@ class _AppNavigatorState extends State<AppNavigator> {
       future: _initialScreen,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Loading screen
+          // loading screen while figuring out which screen to show
           return Scaffold(
             body: Container(
               decoration: BoxDecoration(
@@ -119,8 +120,9 @@ class _AppNavigatorState extends State<AppNavigator> {
 }
 
 
-// HELPER CLASS: Persistent Storage Manager
+// helper class for managing user data storage
 class AuthManager {
+  // saves login info when user signs up or logs in
   static Future<void> saveLoginData({
     required String username,
     required String email,
@@ -131,6 +133,7 @@ class AuthManager {
     await prefs.setString('email', email);
   }
 
+  // saves location coordinates when user allows access
   static Future<void> saveLocationData({
     required double latitude,
     required double longitude,
@@ -141,11 +144,13 @@ class AuthManager {
     await prefs.setString('userLongitude', longitude.toString());
   }
 
+  // marks info popup as seen so it won't show again
   static Future<void> markInfoPopupSeen() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('infoPopupSeen', true);
   }
 
+  // clears all user data when logging out
   static Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', false);
@@ -156,6 +161,7 @@ class AuthManager {
     await prefs.remove('userLongitude');
   }
 
+  // gets the saved username
   static Future<String?> getUsername() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('username');

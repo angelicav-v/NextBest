@@ -20,17 +20,19 @@ class _LoadingScreenState extends State<LoadingScreen>
   void initState() {
     super.initState();
 
-    // Setup animations
+    // setup animation controller (controls timing)
     _controller = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
 
+    // scale animation (makes logo grow)
     _scaleAnimation = Tween<double>(
       begin: 0.8,
       end: 1.0,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
+    // fade animation (makes logo appear)
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
@@ -38,37 +40,35 @@ class _LoadingScreenState extends State<LoadingScreen>
       ),
     );
 
-    // Start animation after frame is built
+    // start animation after screen builds
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _controller.forward();
     });
 
-    // Navigate to login screen after 3 seconds
+    // go to login screen after 3 seconds
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         Navigator.of(context).pushReplacement(
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
                 const LoginScreen(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(
-                    opacity: animation,
-                    child: SlideTransition(
-                      position:
-                          Tween<Offset>(
-                            begin: const Offset(0, 0.1),
-                            end: Offset.zero,
-                          ).animate(
-                            CurvedAnimation(
-                              parent: animation,
-                              curve: Curves.easeOut,
-                            ),
-                          ),
-                      child: child,
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 0.1),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOut,
                     ),
-                  );
-                },
+                  ),
+                  child: child,
+                ),
+              );
+            },
             transitionDuration: const Duration(milliseconds: 800),
           ),
         );
@@ -97,23 +97,19 @@ class _LoadingScreenState extends State<LoadingScreen>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Logo Container with glow effect
+                      // logo with purple glow
                       Container(
                         width: 180,
                         height: 180,
                         decoration: BoxDecoration(
                           color: const Color(0xFF0D0D0D),
-                          borderRadius: BorderRadius.circular(40),
+                          borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF8B3DFF).withOpacity(0.5),
+                              color:
+                                  const Color(0xFFA855F7).withValues(alpha: 0.75),
                               blurRadius: 80,
                               spreadRadius: 15,
-                            ),
-                            BoxShadow(
-                              color: const Color(0xFF8B3DFF).withOpacity(0.3),
-                              blurRadius: 120,
-                              spreadRadius: 25,
                             ),
                           ],
                         ),
@@ -139,21 +135,37 @@ class _LoadingScreenState extends State<LoadingScreen>
                         ),
                       ),
                       const SizedBox(height: 40),
-                      const Text(
-                        'NextBest',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                          letterSpacing: 0.5,
+                      
+                      // app name with gradient
+                      ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [
+                            Color(0xFFC27AFF),
+                            Color(0xFFED6AFF),
+                            Color(0xFFC27AFF),
+                          ],
+                          stops: [0.0, 0.5, 1.0],
+                        ).createShader(bounds),
+                        child: const Text(
+                          'NextBest',
+                          style: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 32,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 12),
+                      
+                      // tagline
                       Text(
                         'Your Next Best Experience',
                         style: TextStyle(
+                          fontFamily: 'Arial',
                           fontSize: 16,
-                          color: Colors.white.withOpacity(0.6),
+                          color: const Color(0xFFDAB2FF).withValues(alpha: 0.7),
                           letterSpacing: 0.3,
                         ),
                       ),

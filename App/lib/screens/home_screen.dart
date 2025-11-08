@@ -30,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadUsername();
   }
 
+  // get username from storage and display it
   Future<void> _loadUsername() async {
     final username = await AuthManager.getUsername();
     setState(() {
@@ -43,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  // hides the info popup and marks it as seen
   void _dismissInfoPopup() {
     setState(() {
       _showInfoPopup = false;
@@ -50,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
     AuthManager.markInfoPopupSeen();
   }
 
+  // shows the info popup again when info button is tapped
   void _showInfoPopupAgain() {
     setState(() {
       _showInfoPopup = true;
@@ -59,1009 +62,719 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       body: GradientBackground(
-        child: SafeArea(
-          child: Stack(
-            children: [
-              SingleChildScrollView(
-                controller: _scrollController,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 12),
-                      // Top bar
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 42,
-                            height: 42,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: LinearGradient(
-                                colors: [
-                                  Color(0xFF9D00FF),
-                                  Color(0xFFB300FF),
-                                ],
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.person,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Image.asset(
-                                'assets/images/nextbest_logo.png',
-                                width: 32,
-                                height: 32,
-                              ),
-                              const SizedBox(width: 8),
-                              ShaderMask(
-                                shaderCallback: (bounds) => const LinearGradient(
-                                  colors: [
-                                    Color(0xFF9D00FF),
-                                    Color(0xFFB300FF),
-                                  ],
-                                ).createShader(bounds),
-                                child: const Text(
-                                  'NextBest',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    letterSpacing: 0.2,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              GestureDetector(
-                                onTap: _showInfoPopupAgain,
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: const Color(0xFF9D00FF),
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  child: const Icon(
-                                    Icons.info_outline,
-                                    color: Color(0xFF9D00FF),
-                                    size: 20,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              GestureDetector(
-                                onTap: () {
-                                  print('Settings tapped');
-                                },
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: const Color(0xFF9D00FF),
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  child: const Icon(
-                                    Icons.settings_outlined,
-                                    color: Color(0xFF9D00FF),
-                                    size: 20,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
-                      // Location
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.location_on,
-                            color: Color(0xFF8B5CF6),
-                            size: 16,
-                          ),
-                          const SizedBox(width: 4),
-                          const Text(
-                            'Statesboro, GA',
-                            style: TextStyle(
-                              color: Color(0xFFD4AFFF),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 0.1,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
-                      // Greeting
-                      Text(
-                        'Hi $_username, ready to find something fun?',
-                        style: const TextStyle(
-                          color: Color(0xFFD4AFFF),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          letterSpacing: 0.1,
-                        ),
-                      ),
-                      const SizedBox(height: 26),
-                      // Pick a Category Section
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Pick a Category',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 0.3,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          const Text(
-                            'Choose what you\'re in the mood for',
-                            style: TextStyle(
-                              color: Color(0xFFD4AFFF),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w300,
-                              letterSpacing: 0.2,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          // Entertainment button - full width - PINK BORDER
-                          SizedBox(
-                            width: double.infinity,
-                            height: 48,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: const Color(0xFFEC4899),
-                                  width: 1.5,
-                                ),
-                              ),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  onTap: () {
-                                    print('Entertainment tapped');
-                                  },
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(
-                                        Icons.movie_outlined,
-                                        color: Color(0xFFEC4899),
-                                        size: 22,
-                                      ),
-                                      const SizedBox(width: 10),
-                                      const Text(
-                                        'Entertainment',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w400,
-                                          letterSpacing: 0.2,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          // Food and Activities - side by side
-                          Row(
-                            children: [
-                              // FOOD - RED/ORANGE BORDER
-                              Expanded(
-                                child: SizedBox(
-                                  height: 48,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: const Color(0xFFEA580C),
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                    child: Material(
-                                      color: Colors.transparent,
-                                      child: InkWell(
-                                        onTap: () {
-                                          print('Food tapped');
-                                        },
-                                        borderRadius: BorderRadius.circular(12),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const Text(
-                                              '🍔',
-                                              style: TextStyle(fontSize: 20),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            const Text(
-                                              'Food',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w400,
-                                                letterSpacing: 0.2,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              // ACTIVITIES - GREEN BORDER
-                              Expanded(
-                                child: SizedBox(
-                                  height: 48,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: const Color(0xFF22C55E),
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                    child: Material(
-                                      color: Colors.transparent,
-                                      child: InkWell(
-                                        onTap: () {
-                                          print('Activities tapped');
-                                        },
-                                        borderRadius: BorderRadius.circular(12),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const Icon(
-                                              Icons.bolt,
-                                              color: Color(0xFF22C55E),
-                                              size: 20,
-                                            ),
-                                            const SizedBox(width: 8),
-                                            const Text(
-                                              'Activities',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w400,
-                                                letterSpacing: 0.2,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          const Text(
-                            'Pick a category above, then spin to\ndiscover your next best spot!',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Color(0xFFD4AFFF),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w300,
-                              letterSpacing: 0.1,
-                              height: 1.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      // Spin Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 54,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            gradient: const LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: [
-                                Color(0xFF9D00FF),
-                                Color(0xFFB300FF),
-                                Color(0xFFD946EF),
-                              ],
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF9D00FF).withOpacity(0.5),
-                                blurRadius: 16,
-                                offset: const Offset(0, 6),
-                              ),
-                            ],
-                          ),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () {
-                                print('Spin tapped');
-                              },
-                              borderRadius: BorderRadius.circular(10),
-                              child: const Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.dashboard_customize,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'Spin for My Next Best!',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.3,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      // Search Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 44,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: Colors.grey.shade800,
-                              width: 1,
-                            ),
-                          ),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () {
-                                print('Search tapped');
-                              },
-                              borderRadius: BorderRadius.circular(8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.search,
-                                    color: Colors.grey.shade700,
-                                    size: 18,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    'Search Manually',
-                                    style: TextStyle(
-                                      color: Colors.grey.shade700,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w300,
-                                      letterSpacing: 0.1,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 28),
-                      // View Favorites
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.favorite,
-                                color: const Color(0xFFB366FF),
-                                size: 18,
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                'View Favorites',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w400,
-                                  letterSpacing: 0.1,
-                                ),
-                              ),
-                            ],
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              print('View All Favorites');
-                            },
-                            child: Text(
-                              'View All',
-                              style: TextStyle(
-                                color: const Color(0xFFB366FF),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: 0.1,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 26),
-                      // Top Rated Near You
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.trending_up,
-                            color: const Color(0xFFB366FF),
-                            size: 18,
-                          ),
-                          const SizedBox(width: 8),
-                          const Text(
-                            'Top Rated Near You',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 0.1,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      // Horizontal scrollable Top Rated
-                      SizedBox(
-                        height: 160,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 5,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                right: index == 4 ? 0 : 12,
-                              ),
-                              child: _buildTopRatedCard(
-                                name: index % 2 == 0 ? 'Vandy\'s' : 'Millhouse',
-                                rating: 4.9,
-                                distance: index % 2 == 0 ? '0.5 mi' : '1.2 mi',
-                                status: 'Open',
-                                category: index % 2 == 0 ? 'Food' : 'Activities',
-                                icon: index % 2 == 0
-                                    ? Icons.restaurant_outlined
-                                    : Icons.sports_baseball,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 28),
-                      // Trending Entertainment
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.local_fire_department,
-                            color: const Color(0xFFB366FF),
-                            size: 18,
-                          ),
-                          const SizedBox(width: 8),
-                          const Text(
-                            'Trending Entertainment',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 0.1,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      // Horizontal scrollable Entertainment
-                      SizedBox(
-                        height: 160,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 5,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                right: index == 4 ? 0 : 12,
-                              ),
-                              child: _buildEntertainmentCard(
-                                title: index % 2 == 0
-                                    ? 'The Midnight\nChronicles'
-                                    : 'Shadow\nDetectiv',
-                                rating: index % 2 == 0 ? 4.5 : 4.6,
-                                source: index % 2 == 0 ? 'Netflix' : 'Hulu',
-                                type: 'Movie',
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 28),
-                      // Friend Votes
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.people,
-                                color: const Color(0xFFB366FF),
-                                size: 18,
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                'Friend Votes',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w400,
-                                  letterSpacing: 0.1,
-                                ),
-                              ),
-                            ],
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              print('View All Friend Votes');
-                            },
-                            child: Text(
-                              'View All',
-                              style: TextStyle(
-                                color: const Color(0xFFB366FF),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: 0.1,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      _buildFriendVoteCard(
-                        friendName: 'Sarah voted',
-                        placeName: 'Main Street Farmers Market',
-                        votes: '12',
-                      ),
-                      const SizedBox(height: 8),
-                      _buildFriendVoteCard(
-                        friendName: 'Mike voted for',
-                        placeName: 'Luetta Moore Park',
-                        votes: '8',
-                      ),
-                      const SizedBox(height: 28),
-                      // Shared with You
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.share,
-                                color: const Color(0xFFB366FF),
-                                size: 18,
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                'Shared with You',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w400,
-                                  letterSpacing: 0.1,
-                                ),
-                              ),
-                            ],
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              print('Share Your Pick');
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 5,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: const Color(0xFF4A90E2).withOpacity(0.2),
-                              ),
-                              child: const Row(
-                                children: [
-                                  Icon(
-                                    Icons.share,
-                                    color: Color(0xFF4A90E2),
-                                    size: 12,
-                                  ),
-                                  SizedBox(width: 3),
-                                  Text(
-                                    'Share Your Pick',
-                                    style: TextStyle(
-                                      color: Color(0xFF4A90E2),
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 0.05,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        height: 100,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 3,
-                          itemBuilder: (context, index) {
-                            final names = ['Jessica', 'David', 'Sarah'];
-                            final places = [
-                              'RAC Sports Complex',
-                              'El Sombrero',
-                              'The Varsity'
-                            ];
-                            final categories = [
-                              'Activities',
-                              'Food',
-                              'Entertainment'
-                            ];
+        child: Stack(
+          children: [
+            // fixed header at the top
+            _buildHeader(),
 
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                right: index == 2 ? 0 : 12,
-                              ),
-                              child: _buildSharedCard(
-                                name: names[index],
-                                place: places[index],
-                                category: categories[index],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 80),
-                    ],
-                  ),
-                ),
-              ),
-              // Info Popup
-              if (_showInfoPopup) _buildInfoPopup(),
-            ],
-          ),
-        ),
-      ),
-      // Bottom Navigation
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: Colors.grey.shade900,
-              width: 1,
-            ),
-          ),
-        ),
-        child: BottomNavigationBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFF9D00FF),
-          unselectedItemColor: Colors.grey.shade700,
-          selectedLabelStyle: const TextStyle(fontSize: 11),
-          unselectedLabelStyle: const TextStyle(fontSize: 11),
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-              label: 'Search',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_outline),
-              label: 'Favorites',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.grid_on),
-              label: 'Randomize',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              label: 'Profile',
-            ),
+            // scrollable content below header
+            _buildScrollableContent(),
+
+            // popup overlay (only shows if _showInfoPopup is true)
+            if (_showInfoPopup) _buildInfoPopup(),
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.black,
+        elevation: 0,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: const Color(0xFF9D00FF),
+        unselectedItemColor: Colors.grey.shade700,
+        selectedLabelStyle: const TextStyle(fontSize: 11),
+        unselectedLabelStyle: const TextStyle(fontSize: 11),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite_outline),
+            label: 'Favorites',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.grid_on),
+            label: 'Randomize',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildTopRatedCard({
-    required String name,
-    required double rating,
-    required String distance,
-    required String status,
-    required String category,
-    required IconData icon,
-  }) {
-    return Container(
-      width: 140,
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Colors.grey.shade900,
-          width: 1,
+  // builds the fixed header section
+  Widget _buildHeader() {
+    return SafeArea(
+      bottom: false,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Colors.grey.shade900, width: 0.5),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 8, 16.0, 0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // top row with profile, logo, and settings icons
+              _buildTopBar(),
+              const SizedBox(height: 29),
+
+              // location text
+              _buildLocationRow(),
+              const SizedBox(height: 22),
+
+              // greeting message
+              Text(
+                'Hi $_username, ready to find something fun?',
+                style: const TextStyle(
+                  color: Color(0xFFDAB2FF),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w300,
+                  height: 20 / 14,
+                ),
+              ),
+              const SizedBox(height: 14),
+            ],
+          ),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    );
+  }
+
+  Widget _buildTopBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // profile icon
+        Container(
+          width: 40,
+          height: 40,
+          padding: EdgeInsets.zero,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.0, 1.0],
+              colors: [Color(0xFF9810FA), Color(0xFFC800DE)],
+            ),
+          ),
+          child: const Icon(Icons.person, color: Colors.white, size: 20),
+        ),
+
+        // app logo and name
+        Row(
+          children: [
+            Container(
+              width: 53,
+              height: 53,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: const Color(
+                    0xFFD946EF,
+                  ), // or whatever gradient color you want
+                  width: 0.7,
+                ),
+                color: Colors.transparent, // No fill!
+              ),
+              child: Center(
+                child: Image.asset(
+                  'assets/images/nextbest_logo.png',
+                  width: 55,
+                  height: 50,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [0.0, 0.5, 1.0],
+                colors: [
+                  Color(0xFFC27AFF),
+                  Color(0xFFED6AFF),
+                  Color(0xFFC27AFF),
+                ],
+              ).createShader(bounds),
+              child: const Text(
+                'NextBest',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  height: 24 / 16,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        // info and settings buttons
+        Row(
+          children: [
+            GestureDetector(
+              onTap: _showInfoPopupAgain,
+              child: Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFF000000).withValues(alpha: 0.4),
+                  border: Border.all(
+                    color: const Color(0xFFAD46FF).withValues(alpha: 0.3),
+                    width: 1.07,
+                  ),
+                ),
+                child: const Icon(
+                  Icons.info_outline,
+                  color: Color(0xFFDAB2FF),
+                  size: 16,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            GestureDetector(
+              onTap: () => print('Settings tapped'),
+              child: Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFF000000).withValues(alpha: 0.4),
+                  border: Border.all(
+                    color: const Color(0xFFAD46FF).withValues(alpha: 0.3),
+                    width: 1.07,
+                  ),
+                ),
+                child: const Icon(
+                  Icons.settings_outlined,
+                  color: Color(0xFFDAB2FF),
+                  size: 16,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLocationRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.location_on, color: Color(0xFFC27AFF), size: 14),
+        const SizedBox(width: 6),
+        const Text(
+          'Statesboro, GA',
+          style: TextStyle(
+            color: Color(0xFFE9D4FF),
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            height: 20 / 14,
+            letterSpacing: 0.05,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // builds the scrollable content section
+Widget _buildScrollableContent() {
+  return Padding(
+    padding: const EdgeInsets.only(top: 220),
+    child: SafeArea(
+      top: false,
+      bottom: true, // include bottom safe area
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            controller: _scrollController,
+            physics: const ClampingScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 32.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    _buildCategorySection(),
+                    const SizedBox(height: 24),
+                    _buildSpinButton(),
+                    const SizedBox(height: 14),
+                    _buildSearchButton(),
+                    const SizedBox(height: 28),
+                    _buildFavoritesSection(),
+                    const SizedBox(height: 28),
+                    _buildFriendVotesSection(),
+                    const SizedBox(height: 28),
+                    _buildSharedSection(),
+                    const SizedBox(height: 60), // extra breathing room
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    ),
+  );
+}
+
+
+  // category selection section
+  Widget _buildCategorySection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Text(
+          'Pick a Category',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.3,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'Choose what you\'re in the mood for',
+          style: TextStyle(
+            color: const Color(0xFFC27AFF),
+            fontSize: 16,
+            fontWeight: FontWeight.w100,
+            letterSpacing: 0.05,
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // entertainment button - full width
+        _buildCategoryButton(
+          '🎬',
+          'Entertainment',
+          const Color(0xFFEC4899),
+          () => print('Entertainment tapped'),
+        ),
+        const SizedBox(height: 12),
+
+        // food and activities buttons side by side
+        Row(
+          children: [
+            Expanded(
+              child: _buildCategoryButton(
+                '🍔',
+                'Food',
+                const Color(0xFFEA580C),
+                () => print('Food tapped'),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildCategoryButton(
+                '⚡',
+                'Activities',
+                const Color(0xFF22C55E),
+                () => print('Activities tapped'),
+                icon: Icons.bolt,
+                iconColor: Colors.amber,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Text(
+          'Pick a category above, then spin to\ndiscover your next best spot!',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: const Color.fromARGB(255, 201, 156, 240),
+            fontSize: 14,
+            fontWeight: FontWeight.w300,
+            letterSpacing: 0.1,
+            height: 1.5,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCategoryButton(
+    String emoji,
+    String label,
+    Color borderColor,
+    VoidCallback onTap, {
+    IconData? icon,
+    Color? iconColor,
+  }) {
+    return SizedBox(
+      height: 56,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: borderColor, width: 1.5),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(14),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (icon != null)
+                  Icon(icon, color: iconColor, size: 22)
+                else
+                  Text(emoji, style: const TextStyle(fontSize: 24)),
+                const SizedBox(width: 12),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSpinButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 68,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: const LinearGradient(
+            colors: [Color(0xFFB700FF), Color(0xFF9D00FF)],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF9D00FF).withOpacity(0.6),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => print('Spin tapped'),
+            borderRadius: BorderRadius.circular(16),
+            child: const Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('🎲', style: TextStyle(fontSize: 32)),
+                  SizedBox(width: 14),
+                  Text(
+                    'Spin for My Next Best!',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+ Widget _buildSearchButton() {
+  return SizedBox(
+    width: double.infinity,
+    height: 52,
+    child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: const Color(0xFF000000).withValues(alpha: 0.4),
+        border: Border.all(
+          color: const Color(0xFFAD46FF).withValues(alpha: 0.3),
+          width: 1.07,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => print('Search tapped'),
+          borderRadius: BorderRadius.circular(12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                icon,
-                color: const Color(0xFFD4714F),
+                Icons.search, 
+                color: const Color(0xFFDAB2FF),
                 size: 20,
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 6,
-                  vertical: 2,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(3),
-                  color: const Color(0xFF27AE60).withOpacity(0.2),
-                ),
-                child: const Text(
-                  'Open',
-                  style: TextStyle(
-                    color: Color(0xFF27AE60),
-                    fontSize: 9,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 0.05,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 0.1,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                    size: 12,
-                  ),
-                  const SizedBox(width: 2),
-                  Text(
-                    rating.toString(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: 0.05,
-                    ),
-                  ),
-                ],
-              ),
+              const SizedBox(width: 8),
               Text(
-                distance,
+                'Search Manually',
                 style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w300,
-                  letterSpacing: 0.05,
+                  color: const Color(0xFFDAB2FF),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0.1,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 6),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 6,
-              vertical: 2,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(3),
-              color: const Color(0xFFB366FF).withOpacity(0.2),
-            ),
-            child: Text(
-              category,
-              style: const TextStyle(
-                color: Color(0xFFB366FF),
-                fontSize: 9,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 0.05,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEntertainmentCard({
-    required String title,
-    required double rating,
-    required String source,
-    required String type,
-  }) {
-    return Container(
-      width: 140,
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Colors.grey.shade900,
-          width: 1,
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            Icons.tv,
-            color: const Color(0xFFD4714F),
-            size: 20,
-          ),
-          const SizedBox(height: 6),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 11,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 0.1,
-              height: 1.3,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 6),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                    size: 12,
-                  ),
-                  const SizedBox(width: 2),
-                  Text(
-                    rating.toString(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: 0.05,
-                    ),
-                  ),
-                ],
-              ),
-              Text(
-                type,
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w300,
-                  letterSpacing: 0.05,
+    ),
+  );
+}
+
+  Widget _buildFavoritesSection() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                gradient: LinearGradient(
+                  colors: [
+                    const Color(0xFFE12AFB),
+                    const Color(0xFFE12AFB).withOpacity(0.7),
+                  ],
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 6,
-              vertical: 2,
+              child: const Icon(Icons.favorite, color: Colors.white, size: 22),
             ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(3),
-              color: const Color(0xFFB366FF).withOpacity(0.2),
-            ),
-            child: Text(
-              source,
-              style: const TextStyle(
-                color: Color(0xFFB366FF),
-                fontSize: 9,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 0.05,
+            const SizedBox(width: 12),
+            const Text(
+              'View Favorites',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.1,
               ),
             ),
+          ],
+        ),
+        GestureDetector(
+          onTap: () => print('View All Favorites'),
+          child: const Text(
+            'View All >',
+            style: TextStyle(
+              color: Color(0xFFE12AFB),
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.1,
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
+  Widget _buildFriendVotesSection() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFF2B7FFF),
+                        const Color(0xFF2B7FFF).withOpacity(0.7),
+                      ],
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.people_outline,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  'Friend Votes',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.1,
+                  ),
+                ),
+              ],
+            ),
+            GestureDetector(
+              onTap: () => print('Share Your Pick'),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF2B7FFF), Color(0xFF1E5FCC)],
+                  ),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.share, color: Colors.white, size: 14),
+                    SizedBox(width: 5),
+                    Text(
+                      'Share',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.05,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        _buildFriendVoteCard(
+          friendName: 'Sarah voted',
+          placeName: 'Main Street Farmers Market',
+          votes: '12',
+        ),
+        const SizedBox(height: 10),
+        _buildFriendVoteCard(
+          friendName: 'Mike voted for',
+          placeName: 'Luetta Moore Park',
+          votes: '8',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSharedSection() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFF2B7FFF),
+                        const Color(0xFF2B7FFF).withOpacity(0.7),
+                      ],
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.share_outlined,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  'Shared with You',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.1,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 100,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 3,
+            itemBuilder: (context, index) {
+              final names = ['Jessica', 'David', 'Sarah'];
+              final places = [
+                'RAC Sports Complex',
+                'El Sombrero',
+                'The Varsity',
+              ];
+              final categories = ['Activities', 'Food', 'Entertainment'];
+
+              return Padding(
+                padding: EdgeInsets.only(right: index == 2 ? 0 : 12),
+                child: _buildSharedCard(
+                  name: names[index],
+                  place: places[index],
+                  category: categories[index],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  // card showing friend's vote for a place
   Widget _buildFriendVoteCard({
     required String friendName,
     required String placeName,
     required String votes,
   }) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Colors.grey.shade900,
-          width: 1,
-        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade900, width: 1),
       ),
       child: Row(
         children: [
           Container(
-            width: 28,
-            height: 28,
+            width: 36,
+            height: 36,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(
-                colors: [
-                  Color(0xFF9D00FF),
-                  Color(0xFFB300FF),
-                ],
+                colors: [Color(0xFF9D00FF), Color(0xFFB300FF)],
               ),
             ),
-            child: const Icon(
-              Icons.person,
-              color: Colors.white,
-              size: 14,
-            ),
+            child: const Icon(Icons.person, color: Colors.white, size: 16),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1070,18 +783,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   friendName,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: FontWeight.w300,
                     letterSpacing: 0.05,
                   ),
                 ),
-                const SizedBox(height: 1),
+                const SizedBox(height: 2),
                 Text(
                   placeName,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: 0.1,
                   ),
                   maxLines: 1,
@@ -1092,18 +805,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Row(
             children: [
-              const Icon(
-                Icons.favorite,
-                color: Color(0xFF9D00FF),
-                size: 14,
-              ),
-              const SizedBox(width: 3),
+              const Icon(Icons.favorite, color: Color(0xFFE12AFB), size: 16),
+              const SizedBox(width: 4),
               Text(
                 votes,
                 style: const TextStyle(
-                  color: Color(0xFF9D00FF),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
+                  color: Color(0xFFE12AFB),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 0.05,
                 ),
               ),
@@ -1114,6 +823,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // card showing place shared by a friend
   Widget _buildSharedCard({
     required String name,
     required String place,
@@ -1121,13 +831,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }) {
     return Container(
       width: 130,
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Colors.grey.shade900,
-          width: 1,
-        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade900, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1135,36 +842,33 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             children: [
               Container(
-                width: 24,
-                height: 24,
+                width: 28,
+                height: 28,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: [
-                      Color(0xFF9D00FF),
-                      Color(0xFFB300FF),
-                    ],
+                    colors: [Color(0xFF9D00FF), Color(0xFFB300FF)],
                   ),
                 ),
-                child: const Icon(
-                  Icons.person,
-                  color: Colors.white,
-                  size: 12,
-                ),
+                child: const Icon(Icons.person, color: Colors.white, size: 12),
               ),
               const SizedBox(width: 6),
-              Text(
-                name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 0.1,
+              Expanded(
+                child: Text(
+                  name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.1,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           Text(
             place,
             style: const TextStyle(
@@ -1178,20 +882,17 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const Spacer(),
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 6,
-              vertical: 2,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(3),
-              color: const Color(0xFFB366FF).withOpacity(0.2),
+              borderRadius: BorderRadius.circular(4),
+              color: const Color(0xFF2B7FFF).withOpacity(0.15),
             ),
             child: Text(
               category,
               style: const TextStyle(
-                color: Color(0xFFB366FF),
+                color: Color(0xFF2B7FFF),
                 fontSize: 8,
-                fontWeight: FontWeight.w400,
+                fontWeight: FontWeight.w500,
                 letterSpacing: 0.05,
               ),
             ),
@@ -1201,98 +902,90 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // info popup explaining how the app works
   Widget _buildInfoPopup() {
     return Container(
-      color: Colors.black.withOpacity(0.8),
+      color: Colors.black.withValues(alpha: 0.8),
       child: Center(
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          padding: const EdgeInsets.all(20),
+          margin: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: const Color(0xFF1A1A1A),
+            borderRadius: BorderRadius.circular(16),
+            gradient: const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFF3C0366), Color(0xFF000000), Color(0xFF4B004F)],
+              stops: [0.0, 0.5, 1.0],
+            ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 56,
-                height: 56,
+                width: 60,
+                height: 60,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: [
-                      Color(0xFF9D00FF),
-                      Color(0xFFB300FF),
-                    ],
+                    colors: [Color(0xFF9810FA), Color(0xFFC800DE)],
                   ),
                 ),
                 child: const Icon(
                   Icons.info_outline,
                   color: Colors.white,
-                  size: 28,
+                  size: 30,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               const Text(
                 'How NextBest Works',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 17,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.3,
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 16),
               Text(
                 '1. Pick a category (Food, Activities, or Entertainment)\n\n'
-                '2. Spin the wheel to get random recommendations\n\n'
-                '3. Browse top-rated places near you\n\n'
-                '4. Share your picks with friends\n\n'
-                '5. Build your favorites list',
+                '2. Spin to get a random recommendation\n\n'
+                '3. Check friend votes and shared picks\n\n'
+                '4. Save to your favorites\n\n'
+                '5. Share your picks with friends',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.grey.shade400,
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: FontWeight.w300,
                   letterSpacing: 0.15,
-                  height: 1.7,
+                  height: 1.8,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
-                height: 46,
+                height: 48,
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                     gradient: const LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        Color(0xFF9D00FF),
-                        Color(0xFFB300FF),
-                      ],
+                      colors: [Color(0xFF9810FA), Color(0xFFC800DE)],
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF9D00FF).withOpacity(0.3),
-                        blurRadius: 8,
-                      ),
-                    ],
                   ),
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
                       onTap: _dismissInfoPopup,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                       child: const Center(
                         child: Text(
                           'Got It, Let\'s Go!',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 14,
+                            fontSize: 15,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.2,
                           ),

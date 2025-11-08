@@ -25,7 +25,7 @@ class _LocationScreenState extends State<LocationScreen> {
     });
 
     try {
-      // Check if location services are enabled
+      // check if location is enabled on device
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         _showErrorDialog(
@@ -38,13 +38,13 @@ class _LocationScreenState extends State<LocationScreen> {
         return;
       }
 
-      // Request location permission
+      // ask for location permission
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
       }
 
-      // Handle permission response
+      // handle what happens based on permission
       if (permission == LocationPermission.denied) {
         _showErrorDialog(
           'Permission Denied',
@@ -57,7 +57,7 @@ class _LocationScreenState extends State<LocationScreen> {
         );
         await Geolocator.openLocationSettings();
       } else {
-        // Permission granted, get the user's current position
+        // permission granted, get current location
         Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
         );
@@ -66,36 +66,38 @@ class _LocationScreenState extends State<LocationScreen> {
         print('Latitude: ${position.latitude}');
         print('Longitude: ${position.longitude}');
 
-        // Save location data
+        // save location to storage
         await AuthManager.saveLocationData(
           latitude: position.latitude,
           longitude: position.longitude,
         );
 
-        // Show success message briefly, then navigate
+        // show success message
         _showSuccessDialog(
           'Location Access Granted',
           'Your location has been obtained and saved',
         );
 
-        // Navigate to home screen after a short delay
+        // go to home screen
         await Future.delayed(const Duration(milliseconds: 500));
         if (mounted) {
           Navigator.of(context).push(
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>
                   HomeScreen(
-                    latitude: position.latitude,
-                    longitude: position.longitude,
-                    showInfoPopup: widget.showPopupOnHomeScreen,
-                  ),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                const begin = Offset(1.0, 0.0);
-                const end = Offset.zero;
-                const curve = Curves.ease;
-                var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                latitude: position.latitude,
+                longitude: position.longitude,
+                showInfoPopup: widget.showPopupOnHomeScreen,
+              ),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
                 return SlideTransition(
-                  position: animation.drive(tween),
+                  position: Tween<Offset>(
+                    begin: const Offset(1.0, 0.0),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(parent: animation, curve: Curves.ease),
+                  ),
                   child: child,
                 );
               },
@@ -116,7 +118,7 @@ class _LocationScreenState extends State<LocationScreen> {
   void _showErrorDialog(String title, String message) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return AlertDialog(
           title: Text(title),
           content: Text(message),
@@ -150,7 +152,7 @@ class _LocationScreenState extends State<LocationScreen> {
   void _showSuccessDialog(String title, String message) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return AlertDialog(
           title: Text(title),
           content: Text(message),
@@ -194,44 +196,12 @@ class _LocationScreenState extends State<LocationScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(height: 40),
-                    // Logo
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0D0D0D),
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF8B3DFF).withOpacity(0.4),
-                            blurRadius: 50,
-                            spreadRadius: 8,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color(0xFFD946EF),
-                              width: 0.75,
-                            ),
-                          ),
-                          child: Center(
-                            child: Image.asset(
-                              'assets/images/nextbest_logo.png',
-                              width: 75,
-                              height: 75,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    
+                    // logo
+                    _buildLogo(),
                     const SizedBox(height: 40),
-                    // Welcome text
+                    
+                    // welcome text
                     const Text(
                       'Welcome to Statesboro!',
                       style: TextStyle(
@@ -242,7 +212,8 @@ class _LocationScreenState extends State<LocationScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    // Subtitle
+                    
+                    // description
                     Text(
                       'Discover the best experiences\nStatesboro, Georgia has to offer',
                       textAlign: TextAlign.center,
@@ -255,111 +226,17 @@ class _LocationScreenState extends State<LocationScreen> {
                       ),
                     ),
                     const SizedBox(height: 48),
-                    // Airplane Icon Circle
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Color(0xFF9D00FF),
-                            Color(0xFFB300FF),
-                          ],
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF9D00FF).withOpacity(0.4),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.send_rounded,
-                          color: Colors.white,
-                          size: 50,
-                        ),
-                      ),
-                    ),
+                    
+                    // paper plane icon
+                    _buildIconCircle(),
                     const SizedBox(height: 48),
-                    // Feature list
-                    Column(
-                      children: [
-                        _buildFeatureItem(
-                          icon: Icons.location_on_outlined,
-                          text: 'Find amazing places in Statesboro',
-                        ),
-                        const SizedBox(height: 20),
-                        _buildFeatureItem(
-                          icon: Icons.location_on_outlined,
-                          text: 'Get personalized\nlocal\nrecommendations',
-                        ),
-                        const SizedBox(height: 20),
-                        _buildFeatureItem(
-                          icon: Icons.location_on_outlined,
-                          text: 'Discover trending spots around town',
-                        ),
-                      ],
-                    ),
+                    
+                    // features list
+                    _buildFeaturesList(),
                     const SizedBox(height: 48),
-                    // Allow Location Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          gradient: const LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              Color(0xFF9D00FF),
-                              Color(0xFFB300FF),
-                            ],
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF9D00FF).withOpacity(0.5),
-                              blurRadius: 16,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: _isLoadingLocation ? null : _handleAllowLocation,
-                            borderRadius: BorderRadius.circular(8),
-                            child: Center(
-                              child: _isLoadingLocation
-                                  ? const SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: CircularProgressIndicator(
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                          Colors.white,
-                                        ),
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Allow Location Access',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 0.3,
-                                      ),
-                                    ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    
+                    // location button
+                    _buildLocationButton(),
                     const SizedBox(height: 16),
                     const SizedBox(height: 30),
                   ],
@@ -372,15 +249,99 @@ class _LocationScreenState extends State<LocationScreen> {
     );
   }
 
+  Widget _buildLogo() {
+    return Container(
+      width: 120,
+      height: 120,
+      decoration: BoxDecoration(
+        color: const Color(0xFF0D0D0D),
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF8B3DFF).withOpacity(0.4),
+            blurRadius: 50,
+            spreadRadius: 8,
+          ),
+        ],
+      ),
+      child: Center(
+        child: Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: const Color(0xFFD946EF),
+              width: 0.75,
+            ),
+          ),
+          child: Center(
+            child: Image.asset(
+              'assets/images/nextbest_logo.png',
+              width: 75,
+              height: 75,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIconCircle() {
+    return Container(
+      width: 100,
+      height: 100,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF9D00FF), Color(0xFFB300FF)],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF9D00FF).withOpacity(0.4),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: const Center(
+        child: Icon(
+          Icons.send_rounded,
+          color: Colors.white,
+          size: 50,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFeaturesList() {
+    return Column(
+      children: [
+        _buildFeatureItem(
+          icon: Icons.location_on_outlined,
+          text: 'Find amazing places in Statesboro',
+        ),
+        const SizedBox(height: 20),
+        _buildFeatureItem(
+          icon: Icons.location_on_outlined,
+          text: 'Get personalized\nlocal\nrecommendations',
+        ),
+        const SizedBox(height: 20),
+        _buildFeatureItem(
+          icon: Icons.location_on_outlined,
+          text: 'Discover trending spots around town',
+        ),
+      ],
+    );
+  }
+
   Widget _buildFeatureItem({required IconData icon, required String text}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(
-          icon,
-          color: Color(0xFFB366FF),
-          size: 20,
-        ),
+        Icon(icon, color: const Color(0xFFB366FF), size: 20),
         const SizedBox(width: 16),
         Expanded(
           child: Text(
@@ -395,6 +356,57 @@ class _LocationScreenState extends State<LocationScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildLocationButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          gradient: const LinearGradient(
+            colors: [Color(0xFF9D00FF), Color(0xFFB300FF)],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF9D00FF).withOpacity(0.5),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: _isLoadingLocation ? null : _handleAllowLocation,
+            borderRadius: BorderRadius.circular(8),
+            child: Center(
+              child: _isLoadingLocation
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.white,
+                        ),
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Text(
+                      'Allow Location Access',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
