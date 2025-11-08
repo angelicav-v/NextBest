@@ -70,8 +70,8 @@ class SearchButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           color: const Color(0xFF000000).withValues(alpha: 0.4),
           border: Border.all(
-            color: const Color(0xFFAD46FF).withValues(alpha: 0.3),
-            width: 1.07,
+            color: const Color.fromARGB(255, 196, 80, 250).withValues(alpha: 0.3),
+            width: 2.1,
           ),
         ),
         child: Material(
@@ -82,14 +82,14 @@ class SearchButton extends StatelessWidget {
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.search, color: Color(0xFFDAB2FF), size: 20),
+                Icon(Icons.search, color: Color.fromARGB(255, 255, 255, 255), size: 20),
                 SizedBox(width: 8),
                 Text(
-                  'Search',
+                  'Search Manually',
                   style: TextStyle(
-                    color: Color(0xFFDAB2FF),
+                    color: Color.fromARGB(255, 255, 255, 255),
                     fontSize: 15,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 0.1,
                   ),
                 ),
