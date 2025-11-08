@@ -3,7 +3,6 @@ import '../widgets/gradient_background.dart';
 import '../widgets/home/home_header.dart';
 import '../widgets/home/category_section.dart';
 import '../widgets/home/action_buttons.dart';
-import '../widgets/home/friend_vote_card.dart';
 import '../widgets/home/info_popup.dart';
 import '../app_navigator.dart';
 
@@ -106,8 +105,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 16),
-                      SearchButton(onTap: () => print('Search tapped')),
-                      const SizedBox(height: 24),
+                      Container(
+                        width: double.infinity,
+                        child: Divider(color: Color(0xFFE12AFB), height: 1, thickness: 1),
+                      ),
+                      const SizedBox(height: 16),
                       CategorySection(
                         onEntertainmentTap: () => print('Entertainment tapped'),
                         onFoodTap: () => print('Food tapped'),
@@ -115,10 +117,27 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 24),
                       SpinButton(onTap: () => print('Spin tapped')),
-                      const SizedBox(height: 28),
+                      const SizedBox(height: 14),
+                      SearchButton(onTap: () => print('Search tapped')),
+                      const SizedBox(height: 16),
+                      Container(
+                        width: double.infinity,
+                        child: Divider(color: Color(0xFFE12AFB), height: 1, thickness: 1),
+                      ),
+                      const SizedBox(height: 16),
                       _buildFavoritesSection(),
-                      const SizedBox(height: 28),
+                      const SizedBox(height: 16),
+                      Container(
+                        width: double.infinity,
+                        child: Divider(color: Color(0xFFE12AFB), height: 1, thickness: 1),
+                      ),
+                      const SizedBox(height: 16),
                       _buildFriendVotesSection(),
+                      const SizedBox(height: 16),
+                      Container(
+                        width: double.infinity,
+                        child: Divider(color: Color(0xFFE12AFB), height: 1, thickness: 1),
+                      ),
                       const SizedBox(height: 60),
                     ],
                   ),
@@ -153,10 +172,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(width: 12),
             const Text(
-              'View Favorites',
+              'Favorites',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 15,
+                fontSize: 16,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.1,
               ),
@@ -169,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'View All >',
             style: TextStyle(
               color: Color(0xFFE12AFB),
-              fontSize: 13,
+              fontSize: 15,
               fontWeight: FontWeight.w500,
               letterSpacing: 0.1,
             ),
@@ -205,10 +224,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(width: 12),
             const Text(
-              'View Friend Votes',
+              'Friend Votes',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 15,
+                fontSize: 16,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.1,
               ),
@@ -221,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'View All >',
             style: TextStyle(
               color: Color(0xFF2B7FFF),
-              fontSize: 13,
+              fontSize: 15,
               fontWeight: FontWeight.w500,
               letterSpacing: 0.1,
             ),
@@ -232,22 +251,31 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildBottomNav() {
-    return BottomNavigationBar(
-      backgroundColor: Colors.black,
-      elevation: 0,
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: const Color(0xFF9D00FF),
-      unselectedItemColor: Colors.grey.shade700,
-      selectedLabelStyle: const TextStyle(fontSize: 13),
-      unselectedLabelStyle: const TextStyle(fontSize: 13),
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.favorite_outline),
-          label: 'Favorites',
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: double.infinity,
+          child: Divider(color: Color(0xFFE12AFB), height: 1, thickness: 1),
         ),
-        BottomNavigationBarItem(icon: Icon(Icons.grid_on), label: 'Randomize'),
+        BottomNavigationBar(
+          backgroundColor: Colors.black,
+          elevation: 0,
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: const Color(0xFF9D00FF),
+          unselectedItemColor: Colors.grey.shade700,
+          selectedLabelStyle: const TextStyle(fontSize: 11),
+          unselectedLabelStyle: const TextStyle(fontSize: 11),
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite_outline),
+              label: 'Favorites',
+            ),
+            BottomNavigationBarItem(icon: Icon(Icons.grid_on), label: 'Randomize'),
+          ],
+        ),
       ],
     );
   }
