@@ -58,6 +58,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
     // everything looks good, save data and move to next screen
     _saveAndNavigate();
+    
   }
 
   Future<void> _saveAndNavigate() async {
@@ -66,6 +67,10 @@ class _SignupScreenState extends State<SignupScreen> {
       username: _usernameController.text,
       email: _emailController.text,
     );
+
+    await AuthManager.saveUsername(_usernameController.text);
+    await AuthManager.saveEmail(_emailController.text);
+    await AuthManager.savePhone(_phoneController.text);
 
     // go to location screen with slide animation from right
     if (mounted) {
@@ -115,10 +120,7 @@ class _SignupScreenState extends State<SignupScreen> {
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
-        contentTextStyle: const TextStyle(
-          color: Colors.white70,
-          fontSize: 14,
-        ),
+        contentTextStyle: const TextStyle(color: Colors.white70, fontSize: 14),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -137,8 +139,9 @@ class _SignupScreenState extends State<SignupScreen> {
 
   // checks if email format is valid using regex
   bool _isValidEmail(String email) {
-    return RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-        .hasMatch(email);
+    return RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    ).hasMatch(email);
   }
 
   @override
@@ -152,34 +155,46 @@ class _SignupScreenState extends State<SignupScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 60),
-                  
+
                   _buildLogo(),
                   const SizedBox(height: 40),
-                  
+
                   _buildTitle(),
                   const SizedBox(height: 12),
-                  
+
                   _buildSubtitle(),
                   const SizedBox(height: 50),
-                  
+
                   // all the input fields
-                  _buildInputField('Username', _usernameController, 'Choose a username'),
+                  _buildInputField(
+                    'Username',
+                    _usernameController,
+                    'Choose a username',
+                  ),
                   const SizedBox(height: 24),
-                  _buildInputField('Email', _emailController, 'Enter your email', 
-                    keyboardType: TextInputType.emailAddress),
+                  _buildInputField(
+                    'Email',
+                    _emailController,
+                    'Enter your email',
+                    keyboardType: TextInputType.emailAddress,
+                  ),
                   const SizedBox(height: 24),
-                  _buildInputField('Phone Number', _phoneController, '+1 (912) 555-0123',
-                    keyboardType: TextInputType.phone),
+                  _buildInputField(
+                    'Phone Number',
+                    _phoneController,
+                    '+1 (912) 555-0123',
+                    keyboardType: TextInputType.phone,
+                  ),
                   const SizedBox(height: 24),
                   _buildPasswordField(),
                   const SizedBox(height: 32),
-                  
+
                   _buildCreateAccountButton(),
                   const SizedBox(height: 24),
-                  
+
                   _buildSignInLink(),
                   const SizedBox(height: 40),
-                  
+
                   _buildCopyright(),
                   const SizedBox(height: 30),
                 ],
@@ -386,7 +401,8 @@ class _SignupScreenState extends State<SignupScreen> {
             suffixIcon: Padding(
               padding: const EdgeInsets.only(right: 12.0),
               child: GestureDetector(
-                onTap: () => setState(() => _obscurePassword = !_obscurePassword),
+                onTap: () =>
+                    setState(() => _obscurePassword = !_obscurePassword),
                 child: Icon(
                   _obscurePassword
                       ? Icons.visibility_off_outlined
@@ -480,7 +496,7 @@ class _SignupScreenState extends State<SignupScreen> {
   // copyright text at the very bottom
   Widget _buildCopyright() {
     return Text(
-      '© 2025 NextBest. All rights reserved.',
+      'Â© 2025 NextBest. All rights reserved.',
       style: TextStyle(
         color: Colors.grey.shade700,
         fontSize: 11,

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../widgets/gradient_background.dart';
-import '../models/friend_model.dart';
+import 'package:nextbest/models/friend_model.dart';
 import '../widgets/profile/profile_header.dart';
 import '../widgets/profile/profile_avatar_section.dart';
 import '../widgets/profile/profile_info_section.dart';
 import '../widgets/profile/profile_friends_section.dart';
 import '../widgets/profile/profile_add_contacts_button.dart';
+import '../app_navigator.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,7 +16,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String _username = 'S'; // This will be fetched from user data
+  String _username = '';
+  late final String _fullUsername;
+  bool _isLoading = true;
   final List<Friend> _friends = [
     Friend(id: '1', name: 'Sarah', addedDate: DateTime.now()),
     Friend(id: '2', name: 'Mike', addedDate: DateTime.now()),
@@ -29,11 +32,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadUsername() async {
-    // TODO: Fetch username from AuthManager or shared preferences
-    // final username = await AuthManager.getUsername();
-    // setState(() {
-    //   _username = username ?? 'User';
-    // });
+    try {
+      final fullUsername = await AuthManager.getUsername();
+      _fullUsername = fullUsername ?? 'User';
+      setState(() {
+        _username = fullUsername?.isNotEmpty == true
+            ? fullUsername![0].toUpperCase()
+            : 'U';
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading username: $e');
+      _fullUsername = 'User';
+      setState(() {
+        _username = 'U';
+        _isLoading = false;
+      });
+    }
   }
 
   void _showAddFriendDialog() {
@@ -258,16 +273,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        body: GradientBackground(
+          child: Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                Colors.white.withOpacity(0.5),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       body: GradientBackground(
         child: SafeArea(
           child: Column(
             children: [
-              // Header with back button and title
-              ProfileHeader(
-                onBackTap: () => Navigator.pop(context),
-              ),
-              // Scrollable content
+              ProfileHeader(onBackTap: () => Navigator.pop(context)),
               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
@@ -275,25 +300,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       children: [
                         const SizedBox(height: 16),
-                        // Profile avatar section
                         ProfileAvatarSection(
                           username: _username,
                           onUploadTap: _showPhotoUploadOptions,
                         ),
                         const SizedBox(height: 24),
-                        // Profile information section
-                        ProfileInfoSection(
-                          username: _username,
-                        ),
+                        ProfileInfoSection(username: _fullUsername),
                         const SizedBox(height: 24),
-                        // Friends section
                         ProfileFriendsSection(
                           friends: _friends,
                           onAddFriendTap: _showAddFriendDialog,
                           onRemoveFriendTap: _showRemoveFriendDialog,
                         ),
                         const SizedBox(height: 24),
-                        // Add from contacts button
                         ProfileAddContactsButton(
                           onTap: _showAddFromContactsDialog,
                         ),

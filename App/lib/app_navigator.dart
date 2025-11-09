@@ -46,17 +46,17 @@ class _AppNavigatorState extends State<AppNavigator> {
     print('infoPopupSeen: $infoPopupSeen');
 
     // logic for determining which screen
-    // 1. if NOT logged in → show login screen
+    // 1. if NOT logged in â†’ show login screen
     if (!isLoggedIn) {
       return const LoginScreen();
     }
     
-    // 2. if logged in but NO location → show location screen
+    // 2. if logged in but NO location â†’ show location screen
     if (!locationGranted) {
       return const LocationScreen(showPopupOnHomeScreen: true);
     }
     
-    // 3. if logged in AND location granted → show home screen
+    // 3. if logged in AND location granted â†’ show home screen
     // (popup will show automatically on first visit)
     if (latitude != null && longitude != null) {
       return HomeScreen(
@@ -122,6 +122,32 @@ class _AppNavigatorState extends State<AppNavigator> {
 
 // helper class for managing user data storage
 class AuthManager {
+  
+  static Future<void> saveEmail(String email) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', email);
+  }
+
+  static Future<String?> getEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('email');
+  }
+
+  static Future<void> saveUsername(String username) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
+  }
+
+  static Future<void> savePhone(String phone) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('phone', phone);
+  }
+
+  static Future<String?> getPhone() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('phone');
+  }
+
   // saves login info when user signs up or logs in
   static Future<void> saveLoginData({
     required String username,
@@ -157,6 +183,7 @@ class AuthManager {
     await prefs.setBool('locationGranted', false);
     await prefs.remove('username');
     await prefs.remove('email');
+    await prefs.remove('phone');
     await prefs.remove('userLatitude');
     await prefs.remove('userLongitude');
   }

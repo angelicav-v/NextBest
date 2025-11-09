@@ -6,6 +6,7 @@ import '../widgets/home/action_buttons.dart';
 import '../widgets/home/info_popup.dart';
 import '../app_navigator.dart';
 import 'profile_screen.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final double latitude;
@@ -80,6 +81,25 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _navigateToSettings() {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const SettingsScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(parent: animation, curve: Curves.ease)),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
               username: _username,
               onProfileTap: _navigateToProfile,
               onInfoTap: _showInfoPopupAgain,
-              onSettingsTap: () => print('Settings tapped'),
+              onSettingsTap: _navigateToSettings,
             ),
 
             // scrollable content
