@@ -72,39 +72,12 @@ class _LocationScreenState extends State<LocationScreen> {
           longitude: position.longitude,
         );
 
-        // show success message
+        // show success message and navigate when user clicks OK
         _showSuccessDialog(
           'Location Access Granted',
           'Your location has been obtained and saved',
+          position,
         );
-
-        // go to home screen
-        await Future.delayed(const Duration(milliseconds: 500));
-        if (mounted) {
-          Navigator.of(context).push(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) =>
-                  HomeScreen(
-                latitude: position.latitude,
-                longitude: position.longitude,
-                showInfoPopup: widget.showPopupOnHomeScreen,
-              ),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                return SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(1.0, 0.0),
-                    end: Offset.zero,
-                  ).animate(
-                    CurvedAnimation(parent: animation, curve: Curves.ease),
-                  ),
-                  child: child,
-                );
-              },
-              transitionDuration: const Duration(milliseconds: 500),
-            ),
-          );
-        }
       }
     } catch (e) {
       _showErrorDialog('Error', 'Failed to get location: $e');
@@ -149,9 +122,10 @@ class _LocationScreenState extends State<LocationScreen> {
     );
   }
 
-  void _showSuccessDialog(String title, String message) {
+  void _showSuccessDialog(String title, String message, Position position) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
           title: Text(title),
@@ -168,7 +142,36 @@ class _LocationScreenState extends State<LocationScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+                // Navigate to home screen AFTER user clicks OK
+                Navigator.of(context).push(
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        HomeScreen(
+                      latitude: position.latitude,
+                      longitude: position.longitude,
+                      showInfoPopup: widget.showPopupOnHomeScreen,
+                    ),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      return SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(1.0, 0.0),
+                          end: Offset.zero,
+                        ).animate(
+                          CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.ease,
+                          ),
+                        ),
+                        child: child,
+                      );
+                    },
+                    transitionDuration: const Duration(milliseconds: 500),
+                  ),
+                );
+              },
               child: const Text(
                 'OK',
                 style: TextStyle(

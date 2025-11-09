@@ -5,6 +5,7 @@ import '../widgets/home/category_section.dart';
 import '../widgets/home/action_buttons.dart';
 import '../widgets/home/info_popup.dart';
 import '../app_navigator.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final double latitude;
@@ -60,6 +61,25 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _navigateToProfile() {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const ProfileScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(parent: animation, curve: Curves.ease)),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,6 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
             // fixed header
             HomeHeader(
               username: _username,
+              onProfileTap: _navigateToProfile,
               onInfoTap: _showInfoPopupAgain,
               onSettingsTap: () => print('Settings tapped'),
             ),
@@ -105,9 +126,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 16),
-                      Container(
+                      SizedBox(
                         width: double.infinity,
-                        child: Divider(color: Color(0xFFE12AFB), height: 1, thickness: 1),
+                        child: Divider(
+                          color: Color(0xFFAD46FF),
+                          height: 1,
+                          thickness: 1,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       CategorySection(
@@ -120,23 +145,35 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 14),
                       SearchButton(onTap: () => print('Search tapped')),
                       const SizedBox(height: 16),
-                      Container(
+                      SizedBox(
                         width: double.infinity,
-                        child: Divider(color: Color(0xFFE12AFB), height: 1, thickness: 1),
+                        child: Divider(
+                          color: Color(0xFFAD46FF),
+                          height: 1,
+                          thickness: 1,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       _buildFavoritesSection(),
                       const SizedBox(height: 16),
-                      Container(
+                      SizedBox(
                         width: double.infinity,
-                        child: Divider(color: Color(0xFFE12AFB), height: 1, thickness: 1),
+                        child: Divider(
+                          color: Color(0xFFAD46FF),
+                          height: 1,
+                          thickness: 1,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       _buildFriendVotesSection(),
                       const SizedBox(height: 16),
-                      Container(
+                      SizedBox(
                         width: double.infinity,
-                        child: Divider(color: Color(0xFFE12AFB), height: 1, thickness: 1),
+                        child: Divider(
+                          color: Color(0xFFAD46FF),
+                          height: 1,
+                          thickness: 1,
+                        ),
                       ),
                       const SizedBox(height: 60),
                     ],
@@ -172,10 +209,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(width: 12),
             const Text(
-              'Favorites',
+              'View Favorites',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.1,
               ),
@@ -188,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'View All >',
             style: TextStyle(
               color: Color(0xFFE12AFB),
-              fontSize: 15,
+              fontSize: 13,
               fontWeight: FontWeight.w500,
               letterSpacing: 0.1,
             ),
@@ -224,10 +261,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(width: 12),
             const Text(
-              'Friend Votes',
+              'View Friend Votes',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.1,
               ),
@@ -240,7 +277,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'View All >',
             style: TextStyle(
               color: Color(0xFF2B7FFF),
-              fontSize: 15,
+              fontSize: 13,
               fontWeight: FontWeight.w500,
               letterSpacing: 0.1,
             ),
@@ -254,9 +291,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
+        SizedBox(
           width: double.infinity,
-          child: Divider(color: Color(0xFFE12AFB), height: 1, thickness: 1),
+          child: Divider(color: Color(0xFFAD46FF), height: 1, thickness: 1),
         ),
         BottomNavigationBar(
           backgroundColor: Colors.black,
@@ -273,7 +310,10 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: Icon(Icons.favorite_outline),
               label: 'Favorites',
             ),
-            BottomNavigationBarItem(icon: Icon(Icons.grid_on), label: 'Randomize'),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.grid_on),
+              label: 'Randomize',
+            ),
           ],
         ),
       ],

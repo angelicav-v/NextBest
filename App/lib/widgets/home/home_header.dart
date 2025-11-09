@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 /// Fixed header section for home screen with logo, location, and controls
 class HomeHeader extends StatelessWidget {
   final String username;
+  final VoidCallback onProfileTap;
   final VoidCallback onInfoTap;
   final VoidCallback onSettingsTap;
 
   const HomeHeader({
     super.key,
     required this.username,
+    required this.onProfileTap,
     required this.onInfoTap,
     required this.onSettingsTap,
   });
@@ -46,20 +48,23 @@ class HomeHeader extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // profile icon
-        Container(
-          width: 40,
-          height: 40,
-          padding: EdgeInsets.zero,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              stops: [0.0, 1.0],
-              colors: [Color(0xFF9810FA), Color(0xFFC800DE)],
+        GestureDetector(
+          onTap: onProfileTap,
+          child: Container(
+            width: 40,
+            height: 40,
+            padding: EdgeInsets.zero,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [0.0, 1.0],
+                colors: [Color(0xFF9810FA), Color(0xFFC800DE)],
+              ),
             ),
+            child: const Icon(Icons.person, color: Colors.white, size: 20),
           ),
-          child: const Icon(Icons.person, color: Colors.white, size: 20),
         ),
 
         // app logo and name
@@ -70,7 +75,10 @@ class HomeHeader extends StatelessWidget {
               height: 53,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFFD946EF), width: 0.7),
+                border: Border.all(
+                  color: const Color(0xFFD946EF),
+                  width: 0.7,
+                ),
                 color: Colors.transparent,
               ),
               child: Center(
@@ -168,7 +176,7 @@ class HomeHeader extends StatelessWidget {
           style: TextStyle(
             color: Color(0xFFE9D4FF),
             fontSize: 16,
-            fontWeight: FontWeight.w400,
+            fontWeight: FontWeight.w300,
             height: 20 / 14,
             letterSpacing: 0.05,
           ),
@@ -182,10 +190,9 @@ class HomeHeader extends StatelessWidget {
       'Hi $username, ready to find something fun?',
       style: const TextStyle(
         color: Color(0xFFDAB2FF),
-        fontSize: 14.5,
+        fontSize: 14,
         fontWeight: FontWeight.w300,
         height: 20 / 14,
-        letterSpacing: 0.5,
       ),
     );
   }
