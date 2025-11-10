@@ -7,6 +7,7 @@ import '../widgets/home/info_popup.dart';
 import '../app_navigator.dart';
 import 'profile_screen.dart';
 import 'settings_screen.dart';
+import 'randomizer_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final double latitude;
@@ -161,7 +162,30 @@ class _HomeScreenState extends State<HomeScreen> {
                         onActivitiesTap: () => print('Activities tapped'),
                       ),
                       const SizedBox(height: 24),
-                      SpinButton(onTap: () => print('Spin tapped')),
+                      SpinButton(onTap: () {
+                        Navigator.of(context).push(
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation, secondaryAnimation) =>
+                                const RandomizerScreen(),
+                            transitionsBuilder:
+                                (context, animation, secondaryAnimation, child) {
+                              return SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(1.0, 0.0),
+                                  end: Offset.zero,
+                                ).animate(
+                                  CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.ease,
+                                  ),
+                                ),
+                                child: child,
+                              );
+                            },
+                            transitionDuration: const Duration(milliseconds: 500),
+                          ),
+                        );
+                      }),
                       const SizedBox(height: 14),
                       SearchButton(onTap: () => print('Search tapped')),
                       const SizedBox(height: 16),
@@ -319,6 +343,7 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Colors.black,
           elevation: 0,
           type: BottomNavigationBarType.fixed,
+          currentIndex: 0, // Home is selected
           selectedItemColor: const Color(0xFF9D00FF),
           unselectedItemColor: Colors.grey.shade700,
           selectedLabelStyle: const TextStyle(fontSize: 11),
@@ -335,6 +360,33 @@ class _HomeScreenState extends State<HomeScreen> {
               label: 'Randomize',
             ),
           ],
+          onTap: (index) {
+            if (index == 3) {
+              // Navigate to Randomizer
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      const RandomizerScreen(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(1.0, 0.0),
+                        end: Offset.zero,
+                      ).animate(
+                        CurvedAnimation(
+                          parent: animation,
+                          curve: Curves.ease,
+                        ),
+                      ),
+                      child: child,
+                    );
+                  },
+                  transitionDuration: const Duration(milliseconds: 500),
+                ),
+              );
+            }
+          },
         ),
       ],
     );
