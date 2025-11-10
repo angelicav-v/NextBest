@@ -3,6 +3,9 @@ import '../widgets/gradient_background.dart';
 import '../widgets/home/home_header.dart';
 import '../widgets/home/category_section.dart';
 import '../widgets/home/action_buttons.dart';
+import '../widgets/home/favorites_section.dart';
+import '../widgets/home/friend_vote_card.dart';
+import '../widgets/home/home_bottom_nav.dart';
 import '../widgets/home/info_popup.dart';
 import '../app_navigator.dart';
 import 'profile_screen.dart';
@@ -29,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _showInfoPopup = true;
   final ScrollController _scrollController = ScrollController();
   String _username = '';
+  String _selectedCategory = '';
 
   @override
   void initState() {
@@ -60,6 +64,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void _showInfoPopupAgain() {
     setState(() {
       _showInfoPopup = true;
+    });
+  }
+
+  void _onCategorySelected(String category) {
+    setState(() {
+      _selectedCategory = category;
     });
   }
 
@@ -101,6 +111,30 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _navigateToRandomizer() {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            RandomizerScreen(
+              selectedCategory: _selectedCategory,
+              autoSpin: _selectedCategory.isNotEmpty,
+              latitude: widget.latitude,
+              longitude: widget.longitude,
+            ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(parent: animation, curve: Curves.ease)),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,7 +158,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(),
+      bottomNavigationBar: HomeBottomNav(
+        onRandomizeTap: _navigateToRandomizer,
+      ),
     );
   }
 
@@ -150,71 +186,55 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: Divider(
-                          color: Color(0xFFAD46FF),
+                          color: const Color(0xFFAD46FF),
                           height: 1,
                           thickness: 1,
                         ),
                       ),
                       const SizedBox(height: 16),
                       CategorySection(
-                        onEntertainmentTap: () => print('Entertainment tapped'),
-                        onFoodTap: () => print('Food tapped'),
-                        onActivitiesTap: () => print('Activities tapped'),
+                        selectedCategory: _selectedCategory,
+                        onCategorySelected: _onCategorySelected,
                       ),
                       const SizedBox(height: 24),
-                      SpinButton(onTap: () {
-                        Navigator.of(context).push(
-                          PageRouteBuilder(
-                            pageBuilder: (context, animation, secondaryAnimation) =>
-                                const RandomizerScreen(),
-                            transitionsBuilder:
-                                (context, animation, secondaryAnimation, child) {
-                              return SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: const Offset(1.0, 0.0),
-                                  end: Offset.zero,
-                                ).animate(
-                                  CurvedAnimation(
-                                    parent: animation,
-                                    curve: Curves.ease,
-                                  ),
-                                ),
-                                child: child,
-                              );
-                            },
-                            transitionDuration: const Duration(milliseconds: 500),
-                          ),
-                        );
-                      }),
+                      SpinButton(
+                        onTap: _selectedCategory.isNotEmpty
+                            ? _navigateToRandomizer
+                            : () {},
+                      ),
                       const SizedBox(height: 14),
                       SearchButton(onTap: () => print('Search tapped')),
                       const SizedBox(height: 16),
                       SizedBox(
                         width: double.infinity,
                         child: Divider(
-                          color: Color(0xFFAD46FF),
+                          color: const Color(0xFFAD46FF),
                           height: 1,
                           thickness: 1,
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _buildFavoritesSection(),
+                      FavoritesSection(
+                        onViewAll: () => print('View All Favorites'),
+                      ),
                       const SizedBox(height: 16),
                       SizedBox(
                         width: double.infinity,
                         child: Divider(
-                          color: Color(0xFFAD46FF),
+                          color: const Color(0xFFAD46FF),
                           height: 1,
                           thickness: 1,
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _buildFriendVotesSection(),
+                      FriendVotesSection(
+                        onViewAll: () => print('View All Friend Votes'),
+                      ),
                       const SizedBox(height: 16),
                       SizedBox(
                         width: double.infinity,
                         child: Divider(
-                          color: Color(0xFFAD46FF),
+                          color: const Color(0xFFAD46FF),
                           height: 1,
                           thickness: 1,
                         ),
@@ -228,167 +248,6 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
       ),
-    );
-  }
-
-  Widget _buildFavoritesSection() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                gradient: LinearGradient(
-                  colors: [
-                    const Color(0xFFE12AFB),
-                    const Color(0xFFE12AFB).withOpacity(0.7),
-                  ],
-                ),
-              ),
-              child: const Icon(Icons.favorite, color: Colors.white, size: 22),
-            ),
-            const SizedBox(width: 12),
-            const Text(
-              'View Favorites',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.1,
-              ),
-            ),
-          ],
-        ),
-        GestureDetector(
-          onTap: () => print('View All Favorites'),
-          child: const Text(
-            'View All >',
-            style: TextStyle(
-              color: Color(0xFFE12AFB),
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.1,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFriendVotesSection() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                gradient: LinearGradient(
-                  colors: [
-                    const Color(0xFF2B7FFF),
-                    const Color(0xFF2B7FFF).withOpacity(0.7),
-                  ],
-                ),
-              ),
-              child: const Icon(
-                Icons.people_outline,
-                color: Colors.white,
-                size: 22,
-              ),
-            ),
-            const SizedBox(width: 12),
-            const Text(
-              'View Friend Votes',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.1,
-              ),
-            ),
-          ],
-        ),
-        GestureDetector(
-          onTap: () => print('View All Friend Votes'),
-          child: const Text(
-            'View All >',
-            style: TextStyle(
-              color: Color(0xFF2B7FFF),
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.1,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBottomNav() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: Divider(color: Color(0xFFAD46FF), height: 1, thickness: 1),
-        ),
-        BottomNavigationBar(
-          backgroundColor: Colors.black,
-          elevation: 0,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: 0, // Home is selected
-          selectedItemColor: const Color(0xFF9D00FF),
-          unselectedItemColor: Colors.grey.shade700,
-          selectedLabelStyle: const TextStyle(fontSize: 11),
-          unselectedLabelStyle: const TextStyle(fontSize: 11),
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_outline),
-              label: 'Favorites',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.grid_on),
-              label: 'Randomize',
-            ),
-          ],
-          onTap: (index) {
-            if (index == 3) {
-              // Navigate to Randomizer
-              Navigator.of(context).push(
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) =>
-                      const RandomizerScreen(),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                    return SlideTransition(
-                      position: Tween<Offset>(
-                        begin: const Offset(1.0, 0.0),
-                        end: Offset.zero,
-                      ).animate(
-                        CurvedAnimation(
-                          parent: animation,
-                          curve: Curves.ease,
-                        ),
-                      ),
-                      child: child,
-                    );
-                  },
-                  transitionDuration: const Duration(milliseconds: 500),
-                ),
-              );
-            }
-          },
-        ),
-      ],
     );
   }
 }

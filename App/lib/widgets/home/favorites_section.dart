@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-/// Friend votes section widget for home screen
-class FriendVotesSection extends StatelessWidget {
+/// Favorites section widget for home screen
+class FavoritesSection extends StatelessWidget {
   final VoidCallback onViewAll;
 
-  const FriendVotesSection({
+  const FavoritesSection({
     super.key,
     required this.onViewAll,
   });
@@ -23,20 +23,16 @@ class FriendVotesSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 gradient: const LinearGradient(
                   colors: [
-                    Color(0xFF2B7FFF),
-                    Color(0xFF2B7FFF),
+                    Color(0xFFE12AFB),
+                    Color(0xFFE12AFB),
                   ],
                 ),
               ),
-              child: const Icon(
-                Icons.people_outline,
-                color: Colors.white,
-                size: 22,
-              ),
+              child: const Icon(Icons.favorite, color: Colors.white, size: 22),
             ),
             const SizedBox(width: 12),
             const Text(
-              'View Friend Votes',
+              'View Favorites',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 15,
@@ -51,7 +47,7 @@ class FriendVotesSection extends StatelessWidget {
           child: const Text(
             'View All >',
             style: TextStyle(
-              color: Color(0xFF2B7FFF),
+              color: Color(0xFFE12AFB),
               fontSize: 13,
               fontWeight: FontWeight.w500,
               letterSpacing: 0.1,

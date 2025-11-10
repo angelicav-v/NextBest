@@ -35,7 +35,7 @@ class HomeHeader extends StatelessWidget {
               _buildLocationRow(),
               const SizedBox(height: 22),
               _buildGreeting(),
-              const SizedBox(height: 14),
+              const SizedBox(height: 10),
             ],
           ),
         ),
@@ -75,10 +75,7 @@ class HomeHeader extends StatelessWidget {
               height: 53,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: const Color(0xFFD946EF),
-                  width: 0.7,
-                ),
+                border: Border.all(color: const Color(0xFFD946EF), width: 0.7),
                 color: Colors.transparent,
               ),
               child: Center(
@@ -105,7 +102,7 @@ class HomeHeader extends StatelessWidget {
                 'NextBest',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 18,
+                  fontSize: 22,
                   fontWeight: FontWeight.w400,
                   height: 24 / 16,
                   letterSpacing: 0.2,
@@ -192,7 +189,7 @@ class HomeHeader extends StatelessWidget {
         color: Color(0xFFDAB2FF),
         fontSize: 14,
         fontWeight: FontWeight.w300,
-        height: 20 / 14,
+        height: 20 / 10,
       ),
     );
   }
