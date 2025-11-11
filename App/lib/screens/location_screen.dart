@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import '../widgets/gradient_background.dart';
 import 'home_screen.dart';
 import '../app_navigator.dart';
+import 'dart:async';
 
 class LocationScreen extends StatefulWidget {
   final bool showPopupOnHomeScreen;
@@ -20,77 +21,137 @@ class _LocationScreenState extends State<LocationScreen> {
   bool _isLoadingLocation = false;
 
   Future<void> _handleAllowLocation() async {
+    // Prevent multiple taps
+    if (_isLoadingLocation) return;
+
     setState(() {
       _isLoadingLocation = true;
     });
 
     try {
-      // check if location is enabled on device
+      print('Starting location permission process...');
+
+      // Step 1: Check if location services are enabled
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      print('Location services enabled: $serviceEnabled');
+
       if (!serviceEnabled) {
-        _showErrorDialog(
-          'Location Services Disabled',
-          'Please enable location services in your device settings',
-        );
+        if (mounted) {
+          _showErrorDialog(
+            'Location Services Disabled',
+            'Please enable location services in your device settings',
+          );
+        }
         setState(() {
           _isLoadingLocation = false;
         });
         return;
       }
 
-      // ask for location permission
+      // Step 2: Check current permission
       LocationPermission permission = await Geolocator.checkPermission();
+      print('Current permission: $permission');
+
+      // Step 3: Request permission if needed
       if (permission == LocationPermission.denied) {
+        print('Requesting location permission...');
         permission = await Geolocator.requestPermission();
+        print('Permission after request: $permission');
       }
 
-      // handle what happens based on permission
+      // Step 4: Handle permission result
       if (permission == LocationPermission.denied) {
-        _showErrorDialog(
-          'Permission Denied',
-          'Location permission is required to use this feature',
-        );
-      } else if (permission == LocationPermission.deniedForever) {
-        _showErrorDialog(
-          'Permission Denied',
-          'Please enable location access in app settings',
-        );
-        await Geolocator.openLocationSettings();
-      } else {
-        // permission granted, get current location
+        if (mounted) {
+          _showErrorDialog(
+            'Permission Denied',
+            'Location permission is required to use this feature',
+          );
+        }
+        setState(() {
+          _isLoadingLocation = false;
+        });
+        return;
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        if (mounted) {
+          _showErrorDialog(
+            'Permission Denied',
+            'Location permission has been permanently denied. Please enable it in app settings.',
+          );
+        }
+        // Open app settings
+        await Geolocator.openAppSettings();
+        setState(() {
+          _isLoadingLocation = false;
+        });
+        return;
+      }
+
+      // Step 5: Permission granted - get location with timeout
+      print('Permission granted, fetching location...');
+      
+      try {
+        // Add a timeout to prevent infinite waiting
         Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
+          timeLimit: const Duration(seconds: 15),
+        ).timeout(
+          const Duration(seconds: 20),
+          onTimeout: () {
+            throw Exception('Location fetch timed out. Please try again.');
+          },
         );
 
-        print('Location obtained:');
+        print('Location obtained successfully:');
         print('Latitude: ${position.latitude}');
         print('Longitude: ${position.longitude}');
 
-        // save location to storage
+        // Save location data
         await AuthManager.saveLocationData(
           latitude: position.latitude,
           longitude: position.longitude,
         );
 
-        // show success message and navigate when user clicks OK
-        _showSuccessDialog(
-          'Location Access Granted',
-          'Your location has been obtained and saved',
-          position,
-        );
+        if (mounted) {
+          _showSuccessDialog(
+            'Location Access Granted',
+            'Your location has been obtained and saved',
+            position,
+          );
+        }
+      } on TimeoutException catch (_) {
+        if (mounted) {
+          _showErrorDialog(
+            'Location Timeout',
+            'Could not retrieve location. Please check your GPS and try again.',
+          );
+        }
+        setState(() {
+          _isLoadingLocation = false;
+        });
       }
     } catch (e) {
-      _showErrorDialog('Error', 'Failed to get location: $e');
+      print('Error during location process: $e');
+      if (mounted) {
+        _showErrorDialog(
+          'Error',
+          'Failed to get location: $e',
+        );
+      }
     } finally {
-      setState(() {
-        _isLoadingLocation = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoadingLocation = false;
+        });
+      }
     }
   }
 
   void _showErrorDialog(String title, String message) {
     showDialog(
       context: context,
+      barrierDismissible: true,
       builder: (context) {
         return AlertDialog(
           title: Text(title),
@@ -107,7 +168,9 @@ class _LocationScreenState extends State<LocationScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
               child: const Text(
                 'OK',
                 style: TextStyle(
@@ -144,33 +207,36 @@ class _LocationScreenState extends State<LocationScreen> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close dialog
-                // Navigate to home screen AFTER user clicks OK
-                Navigator.of(context).push(
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        HomeScreen(
-                      latitude: position.latitude,
-                      longitude: position.longitude,
-                      showInfoPopup: widget.showPopupOnHomeScreen,
-                    ),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                      return SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(1.0, 0.0),
-                          end: Offset.zero,
-                        ).animate(
-                          CurvedAnimation(
-                            parent: animation,
-                            curve: Curves.ease,
+                
+                // Navigate to home screen after dialog closes
+                if (mounted) {
+                  Navigator.of(context).push(
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          HomeScreen(
+                        latitude: position.latitude,
+                        longitude: position.longitude,
+                        showInfoPopup: widget.showPopupOnHomeScreen,
+                      ),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        return SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(1.0, 0.0),
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.ease,
+                            ),
                           ),
-                        ),
-                        child: child,
-                      );
-                    },
-                    transitionDuration: const Duration(milliseconds: 500),
-                  ),
-                );
+                          child: child,
+                        );
+                      },
+                      transitionDuration: const Duration(milliseconds: 500),
+                    ),
+                  );
+                }
               },
               child: const Text(
                 'OK',

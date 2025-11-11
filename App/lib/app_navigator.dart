@@ -33,30 +33,31 @@ class _AppNavigatorState extends State<AppNavigator> {
     // check if user has seen the info popup
     bool infoPopupSeen = prefs.getBool('infoPopupSeen') ?? false;
     
-    // get stored location coordinates
+    // get stored location coordinates - now using getDouble instead of parsing strings
     double? latitude = prefs.containsKey('userLatitude') 
-        ? double.tryParse(prefs.getString('userLatitude') ?? '') 
+        ? prefs.getDouble('userLatitude')
         : null;
     double? longitude = prefs.containsKey('userLongitude') 
-        ? double.tryParse(prefs.getString('userLongitude') ?? '') 
+        ? prefs.getDouble('userLongitude')
         : null;
 
     print('isLoggedIn: $isLoggedIn');
     print('locationGranted: $locationGranted');
     print('infoPopupSeen: $infoPopupSeen');
+    print('latitude: $latitude, longitude: $longitude');
 
     // logic for determining which screen
-    // 1. if NOT logged in â†’ show login screen
+    // 1. if NOT logged in → show login screen
     if (!isLoggedIn) {
       return const LoginScreen();
     }
     
-    // 2. if logged in but NO location â†’ show location screen
+    // 2. if logged in but NO location → show location screen
     if (!locationGranted) {
       return const LocationScreen(showPopupOnHomeScreen: true);
     }
     
-    // 3. if logged in AND location granted â†’ show home screen
+    // 3. if logged in AND location granted → show home screen
     // (popup will show automatically on first visit)
     if (latitude != null && longitude != null) {
       return HomeScreen(
@@ -66,8 +67,8 @@ class _AppNavigatorState extends State<AppNavigator> {
       );
     }
     
-    // fallback to login if something went wrong
-    return const LoginScreen();
+    // fallback to location screen if coordinates are missing
+    return const LocationScreen(showPopupOnHomeScreen: true);
   }
 
   @override
@@ -124,28 +125,56 @@ class _AppNavigatorState extends State<AppNavigator> {
 class AuthManager {
   
   static Future<void> saveEmail(String email) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('email', email);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('email', email);
+      print('Email saved: $email');
+    } catch (e) {
+      print('Error saving email: $e');
+      rethrow;
+    }
   }
 
   static Future<String?> getEmail() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('email');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('email');
+    } catch (e) {
+      print('Error getting email: $e');
+      return null;
+    }
   }
 
   static Future<void> saveUsername(String username) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('username', username);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('username', username);
+      print('Username saved: $username');
+    } catch (e) {
+      print('Error saving username: $e');
+      rethrow;
+    }
   }
 
   static Future<void> savePhone(String phone) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('phone', phone);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('phone', phone);
+      print('Phone saved: $phone');
+    } catch (e) {
+      print('Error saving phone: $e');
+      rethrow;
+    }
   }
 
   static Future<String?> getPhone() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('phone');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('phone');
+    } catch (e) {
+      print('Error getting phone: $e');
+      return null;
+    }
   }
 
   // saves login info when user signs up or logs in
@@ -153,44 +182,75 @@ class AuthManager {
     required String username,
     required String email,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', true);
-    await prefs.setString('username', username);
-    await prefs.setString('email', email);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('username', username);
+      await prefs.setString('email', email);
+      print('Login data saved - Username: $username, Email: $email');
+    } catch (e) {
+      print('Error saving login data: $e');
+      rethrow;
+    }
   }
 
   // saves location coordinates when user allows access
+  // FIXED: Now uses setDouble instead of setString for type safety
   static Future<void> saveLocationData({
     required double latitude,
     required double longitude,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('locationGranted', true);
-    await prefs.setString('userLatitude', latitude.toString());
-    await prefs.setString('userLongitude', longitude.toString());
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('locationGranted', true);
+      // Use setDouble for better performance and type safety
+      await prefs.setDouble('userLatitude', latitude);
+      await prefs.setDouble('userLongitude', longitude);
+      print('Location data saved successfully - Lat: $latitude, Long: $longitude');
+    } catch (e) {
+      print('Error saving location data: $e');
+      rethrow;
+    }
   }
 
   // marks info popup as seen so it won't show again
   static Future<void> markInfoPopupSeen() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('infoPopupSeen', true);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('infoPopupSeen', true);
+      print('Info popup marked as seen');
+    } catch (e) {
+      print('Error marking info popup as seen: $e');
+      rethrow;
+    }
   }
 
   // clears all user data when logging out
   static Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', false);
-    await prefs.setBool('locationGranted', false);
-    await prefs.remove('username');
-    await prefs.remove('email');
-    await prefs.remove('phone');
-    await prefs.remove('userLatitude');
-    await prefs.remove('userLongitude');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', false);
+      await prefs.setBool('locationGranted', false);
+      await prefs.remove('username');
+      await prefs.remove('email');
+      await prefs.remove('phone');
+      await prefs.remove('userLatitude');
+      await prefs.remove('userLongitude');
+      print('User logged out and all data cleared');
+    } catch (e) {
+      print('Error during logout: $e');
+      rethrow;
+    }
   }
 
   // gets the saved username
   static Future<String?> getUsername() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('username');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('username');
+    } catch (e) {
+      print('Error getting username: $e');
+      return null;
+    }
   }
 }

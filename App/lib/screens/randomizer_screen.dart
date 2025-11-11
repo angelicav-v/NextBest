@@ -23,8 +23,18 @@ class _RandomizerScreenState extends State<RandomizerScreen>
     with TickerProviderStateMixin {
   String selectedCategory = '';
   bool isSpinning = false;
+  Set<String> selectedFilters = {};
+  bool favoritesOnly = false;
+  Map<String, int> ratings = {}; // Store ratings by location name
 
   late AnimationController _spinController;
+
+  // Filter options for each category
+  final Map<String, List<String>> categoryFilters = {
+    'Food': ['Italian', 'Japanese', 'American', 'Mexican', 'Thai', 'Indian'],
+    'Activity': ['Outdoor', 'Indoor', 'Adventure', 'Relaxing', 'Sports', 'Cultural'],
+    'Entertainment': ['Drama', 'Action', 'Comedy', 'Thriller', 'Horror', 'Romance', 'Sci-Fi', 'Mystery'],
+  };
 
   final Map<String, List<Map<String, dynamic>>> mockLocations = {
     'Food': [
@@ -147,6 +157,14 @@ class _RandomizerScreenState extends State<RandomizerScreen>
     if (locations.isNotEmpty) {
       List<Map<String, dynamic>> filtered = locations;
 
+      // Apply filters
+      if (selectedFilters.isNotEmpty) {
+        filtered = filtered.where((location) {
+          final category = location['category'] ?? location['genre'] ?? '';
+          return selectedFilters.contains(category);
+        }).toList();
+      }
+
       if (filtered.isEmpty) filtered = locations;
 
       final random = (filtered..shuffle()).first;
@@ -181,6 +199,9 @@ class _RandomizerScreenState extends State<RandomizerScreen>
   }
 
   Widget _buildEntertainmentCard() {
+    final movieName = currentResult['name'] ?? 'Movie';
+    final currentRating = ratings[movieName] ?? 0;
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
@@ -547,7 +568,7 @@ class _RandomizerScreenState extends State<RandomizerScreen>
 
                       const SizedBox(height: 18),
 
-                      // RATE THIS SHOW - Gradient with stroke
+                      // RATE THIS SHOW - Gradient with stroke - NOW INTERACTIVE
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
@@ -583,14 +604,25 @@ class _RandomizerScreenState extends State<RandomizerScreen>
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: List.generate(
                                 5,
-                                (index) => Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                  ),
-                                  child: Icon(
-                                    Icons.star_outline,
-                                    color: const Color(0xFFE12AFB),
-                                    size: 26,
+                                (index) => GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      ratings[movieName] = index + 1;
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                    ),
+                                    child: Icon(
+                                      currentRating > index
+                                          ? Icons.star
+                                          : Icons.star_outline,
+                                      color: currentRating > index
+                                          ? Colors.amber
+                                          : const Color(0xFFE12AFB),
+                                      size: 26,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -795,6 +827,9 @@ class _RandomizerScreenState extends State<RandomizerScreen>
   }
 
   Widget _buildLocationCard() {
+    final locationName = currentResult['name'] ?? 'Location';
+    final currentRating = ratings[locationName] ?? 0;
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
@@ -987,7 +1022,7 @@ class _RandomizerScreenState extends State<RandomizerScreen>
                       ),
                       const SizedBox(height: 16),
 
-                      // RATE THIS GEM - Gradient with stroke
+                      // RATE THIS GEM - Gradient with stroke - NOW INTERACTIVE
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
@@ -1023,14 +1058,25 @@ class _RandomizerScreenState extends State<RandomizerScreen>
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: List.generate(
                                 5,
-                                (index) => Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                  ),
-                                  child: Icon(
-                                    Icons.star_outline,
-                                    color: const Color(0xFFE12AFB),
-                                    size: 24,
+                                (index) => GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      ratings[locationName] = index + 1;
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                    ),
+                                    child: Icon(
+                                      currentRating > index
+                                          ? Icons.star
+                                          : Icons.star_outline,
+                                      color: currentRating > index
+                                          ? Colors.amber
+                                          : const Color(0xFFE12AFB),
+                                      size: 24,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1615,6 +1661,7 @@ class _RandomizerScreenState extends State<RandomizerScreen>
                                         onTap: () {
                                           setState(() {
                                             selectedCategory = category;
+                                            selectedFilters.clear();
                                           });
                                         },
                                         child: Container(
@@ -1690,6 +1737,173 @@ class _RandomizerScreenState extends State<RandomizerScreen>
                                       );
                                     })
                                     .toList(),
+                              ),
+                              const SizedBox(height: 20),
+                              
+                              // FILTERS SECTION
+                              if (selectedCategory.isNotEmpty) ...[
+                                const Text(
+                                  'REFINE SEARCH (MULTI-SELECT)',
+                                  style: TextStyle(
+                                    color: Color(0xFF00BCD4),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    ...categoryFilters[selectedCategory]
+                                            ?.map((filter) {
+                                          bool isSelected =
+                                              selectedFilters.contains(filter);
+                                          return GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                if (isSelected) {
+                                                  selectedFilters
+                                                      .remove(filter);
+                                                } else {
+                                                  selectedFilters.add(filter);
+                                                }
+                                              });
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets
+                                                  .symmetric(
+                                                horizontal: 12,
+                                                vertical: 6,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                gradient: isSelected
+                                                    ? const LinearGradient(
+                                                        begin: Alignment
+                                                            .topLeft,
+                                                        end: Alignment
+                                                            .bottomRight,
+                                                        colors: [
+                                                          Color(0xFF2B7FFF),
+                                                          Color(0xFF00B8DB),
+                                                        ],
+                                                      )
+                                                    : null,
+                                                color: !isSelected
+                                                    ? Colors.transparent
+                                                    : null,
+                                                border: Border.all(
+                                                  color: isSelected
+                                                      ? Colors.transparent
+                                                      : const Color(0xFFC27AFF)
+                                                          .withOpacity(0.3),
+                                                  width: 1.07,
+                                                ),
+                                              ),
+                                              child: Text(
+                                                filter,
+                                                style: TextStyle(
+                                                  color: isSelected
+                                                      ? Colors.white
+                                                      : const Color(0xFFDAB2FF),
+                                                  fontSize: 12,
+                                                  fontWeight: isSelected
+                                                      ? FontWeight.w600
+                                                      : FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }).toList() ??
+                                        [],
+                                    if (selectedFilters.isNotEmpty)
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedFilters.clear();
+                                          });
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            color: Colors.transparent,
+                                            border: Border.all(
+                                              color: const Color(0xFFC27AFF)
+                                                  .withOpacity(0.3),
+                                              width: 1.07,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Text(
+                                                '✕ ',
+                                                style: TextStyle(
+                                                  color: Color(0xFFFF6B9D),
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              const Text(
+                                                'Clear All',
+                                                style: TextStyle(
+                                                  color: Color(0xFFFF6B9D),
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+
+                              // FAVORITES TOGGLE
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.favorite,
+                                    color: Color(0xFFFF6B9D),
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Expanded(
+                                    child: Text(
+                                      'Favorites Only',
+                                      style: TextStyle(
+                                        color: Color(0xFFDAB2FF),
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  Transform.scale(
+                                    scale: 0.8,
+                                    child: Switch(
+                                      value: favoritesOnly,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          favoritesOnly = value;
+                                        });
+                                      },
+                                      activeColor:
+                                          const Color(0xFF2B7FFF),
+                                      inactiveTrackColor:
+                                          Colors.grey.withOpacity(0.5),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
