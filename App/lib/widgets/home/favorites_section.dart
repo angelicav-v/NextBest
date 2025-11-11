@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Favorites section widget for home screen
+/// Favorites section widget for home screen - shows favorites preview
 class FavoritesSection extends StatelessWidget {
   final VoidCallback onViewAll;
 

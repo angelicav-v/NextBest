@@ -11,6 +11,8 @@ import '../app_navigator.dart';
 import 'profile_screen.dart';
 import 'settings_screen.dart';
 import 'randomizer_screen.dart';
+import 'search_screen.dart';
+import 'favorites_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final double latitude;
@@ -69,7 +71,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onCategorySelected(String category) {
     setState(() {
-      _selectedCategory = category;
+      // Toggle: if clicking same category, deselect it
+      if (_selectedCategory == category) {
+        _selectedCategory = '';
+      } else {
+        _selectedCategory = category;
+      }
     });
   }
 
@@ -111,6 +118,25 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _navigateToSearch() {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const SearchScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(parent: animation, curve: Curves.ease)),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+    );
+  }
+
   void _navigateToRandomizer() {
     Navigator.of(context).push(
       PageRouteBuilder(
@@ -121,6 +147,25 @@ class _HomeScreenState extends State<HomeScreen> {
               latitude: widget.latitude,
               longitude: widget.longitude,
             ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(parent: animation, curve: Curves.ease)),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+    );
+  }
+
+  void _navigateToFavorites() {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const FavoritesScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
             position: Tween<Offset>(
@@ -160,6 +205,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: HomeBottomNav(
         onRandomizeTap: _navigateToRandomizer,
+        onSearchTap: _navigateToSearch,
+        onFavoritesTap: _navigateToFavorites,
       ),
     );
   }
@@ -203,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             : () {},
                       ),
                       const SizedBox(height: 14),
-                      SearchButton(onTap: () => print('Search tapped')),
+                      SearchButton(onTap: _navigateToSearch),
                       const SizedBox(height: 16),
                       SizedBox(
                         width: double.infinity,
@@ -215,7 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 16),
                       FavoritesSection(
-                        onViewAll: () => print('View All Favorites'),
+                        onViewAll: _navigateToFavorites,
                       ),
                       const SizedBox(height: 16),
                       SizedBox(
@@ -227,9 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      FriendVotesSection(
-                        onViewAll: () => print('View All Friend Votes'),
-                      ),
+                      const FriendVotesSection(),
                       const SizedBox(height: 16),
                       SizedBox(
                         width: double.infinity,

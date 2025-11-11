@@ -56,7 +56,7 @@ class CategorySection extends StatelessWidget {
         _CategoryButton(
           emoji: '🎬',
           label: 'Entertainment',
-          selectedStrokeColor: const Color(0xFFFB64B6),
+          selectedStrokeColor: const Color(0xFF00B8DB),
           isSelected: selectedCategory == 'Entertainment',
           onTap: () => onCategorySelected('Entertainment'),
         ),
@@ -69,7 +69,7 @@ class CategorySection extends StatelessWidget {
               child: _CategoryButton(
                 emoji: '🍕',
                 label: 'Food',
-                selectedStrokeColor: const Color(0xFFFF8904),
+                selectedStrokeColor: const Color(0xFFFB2C36),
                 isSelected: selectedCategory == 'Food',
                 onTap: () => onCategorySelected('Food'),
               ),
@@ -79,7 +79,7 @@ class CategorySection extends StatelessWidget {
               child: _CategoryButton(
                 emoji: '⚡',
                 label: 'Activity',
-                selectedStrokeColor: const Color(0xFF00D5BE),
+                selectedStrokeColor: const Color(0xFF00BC7D),
                 isSelected: selectedCategory == 'Activity',
                 onTap: () => onCategorySelected('Activity'),
               ),
@@ -121,17 +121,19 @@ class _CategoryButton extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: label == 'Entertainment'
-                        ? const [Color(0xFFE60076), Color(0xFFEC003F)]
+                        ? const [Color(0xFF2B7FFF), Color(0xFF00B8DB)]
                         : label == 'Food'
-                            ? const [Color(0xFFF54900), Color(0xFFE17100)]
-                            : const [Color(0xFF009689), Color(0xFF0092B8)],
+                            ? const [Color(0xFFFF6900), Color(0xFFFB2C36)]
+                            : const [Color(0xFF00C950), Color(0xFF00BC7D)],
                   )
                 : null,
             color: !isSelected
                 ? const Color(0xFF000000).withOpacity(0.4)
                 : null,
             border: Border.all(
-              color: isSelected ? selectedStrokeColor : const Color(0xFFC27AFF).withOpacity(0.2),
+              color: isSelected
+                  ? selectedStrokeColor
+                  : const Color(0xFFC27AFF).withOpacity(0.2),
               width: isSelected ? 2.0 : 1.33,
             ),
             boxShadow: isSelected
@@ -152,21 +154,40 @@ class _CategoryButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    emoji,
-                    style: const TextStyle(fontSize: 24),
-                  ),
+                  Text(emoji, style: const TextStyle(fontSize: 24)),
                   const SizedBox(width: 12),
                   Text(
                     label,
                     style: TextStyle(
-                      color: isSelected ? Colors.white : const Color(0xFFDAB2FF),
+                      color: isSelected
+                          ? Colors.white
+                          : const Color(0xFFDAB2FF),
                       fontSize: 16,
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w500,
                       letterSpacing: 0.2,
                     ),
                   ),
+                  // X button right next to text when selected
+                  if (isSelected) ...[
+                    const SizedBox(width: 12),
+                    Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(0.2),
+                      ),
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 12,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),

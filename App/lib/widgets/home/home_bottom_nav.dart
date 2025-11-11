@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 
 /// Bottom navigation bar widget for home screen
 class HomeBottomNav extends StatelessWidget {
+  final VoidCallback onSearchTap;
   final VoidCallback onRandomizeTap;
+  final VoidCallback onFavoritesTap;
 
   const HomeBottomNav({
     super.key,
+    required this.onSearchTap,
     required this.onRandomizeTap,
+    required this.onFavoritesTap,
   });
 
   @override
@@ -44,7 +48,11 @@ class HomeBottomNav extends StatelessWidget {
             ),
           ],
           onTap: (index) {
-            if (index == 3) {
+            if (index == 1) {
+              onSearchTap();
+            } else if (index == 2) {
+              onFavoritesTap();
+            } else if (index == 3) {
               onRandomizeTap();
             }
           },

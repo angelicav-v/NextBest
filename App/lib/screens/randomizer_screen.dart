@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/gradient_background.dart';
+import 'search_screen.dart';
+import 'favorites_screen.dart';
 
 class RandomizerScreen extends StatefulWidget {
   final double latitude;
@@ -186,19 +188,65 @@ class _RandomizerScreenState extends State<RandomizerScreen>
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => _buildResultCard(),
+      builder: (context) => StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return _buildResultCard(setState);
+        },
+      ),
     );
   }
 
-  Widget _buildResultCard() {
-    if (selectedCategory == 'Entertainment') {
-      return _buildEntertainmentCard();
-    } else {
-      return _buildLocationCard();
+  LinearGradient _getCategoryGradient(String category) {
+    switch (category) {
+      case 'Food':
+        return const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFFF6900), Color(0xFFFB2C36)],
+        );
+      case 'Activity':
+        return const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF00C950), Color(0xFF00BC7D)],
+        );
+      case 'Entertainment':
+        return const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF2B7FFF), Color(0xFF00B8DB)],
+        );
+      default:
+        return const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF9810FA), Color(0xFFC800DE)],
+        );
     }
   }
 
-  Widget _buildEntertainmentCard() {
+  IconData _getCategoryIcon(String category) {
+    switch (category) {
+      case 'Food':
+        return Icons.restaurant;
+      case 'Activity':
+        return Icons.landscape;
+      case 'Entertainment':
+        return Icons.movie;
+      default:
+        return Icons.location_on;
+    }
+  }
+
+  Widget _buildResultCard(StateSetter bottomSheetSetState) {
+    if (selectedCategory == 'Entertainment') {
+      return _buildEntertainmentCard(bottomSheetSetState);
+    } else {
+      return _buildLocationCard(bottomSheetSetState);
+    }
+  }
+
+  Widget _buildEntertainmentCard(StateSetter bottomSheetSetState) {
     final movieName = currentResult['name'] ?? 'Movie';
     final currentRating = ratings[movieName] ?? 0;
 
@@ -235,12 +283,7 @@ class _RandomizerScreenState extends State<RandomizerScreen>
                 height: 200,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  gradient: const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: [0.0, 1.0],
-                    colors: [Color(0xFF9810FA), Color(0xFFC800DE)],
-                  ),
+                  gradient: _getCategoryGradient('Entertainment'),
                   border: Border.all(
                     color: const Color(0xFFC27AFF).withOpacity(0.3),
                     width: 1.33,
@@ -606,7 +649,7 @@ class _RandomizerScreenState extends State<RandomizerScreen>
                                 5,
                                 (index) => GestureDetector(
                                   onTap: () {
-                                    setState(() {
+                                    bottomSheetSetState(() {
                                       ratings[movieName] = index + 1;
                                     });
                                   },
@@ -826,7 +869,7 @@ class _RandomizerScreenState extends State<RandomizerScreen>
     );
   }
 
-  Widget _buildLocationCard() {
+  Widget _buildLocationCard(StateSetter bottomSheetSetState) {
     final locationName = currentResult['name'] ?? 'Location';
     final currentRating = ratings[locationName] ?? 0;
 
@@ -863,12 +906,7 @@ class _RandomizerScreenState extends State<RandomizerScreen>
                 height: 200,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  gradient: const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: [0.0, 1.0],
-                    colors: [Color(0xFF9810FA), Color(0xFFC800DE)],
-                  ),
+                  gradient: _getCategoryGradient(selectedCategory),
                   border: Border.all(
                     color: const Color(0xFFC27AFF).withOpacity(0.3),
                     width: 1.33,
@@ -882,10 +920,10 @@ class _RandomizerScreenState extends State<RandomizerScreen>
                     ),
                   ],
                 ),
-                child: const Center(
+                child: Center(
                   child: Icon(
-                    Icons.location_on,
-                    color: Color(0xFFE12AFB),
+                    _getCategoryIcon(selectedCategory),
+                    color: const Color(0xFFE12AFB),
                     size: 48,
                   ),
                 ),
@@ -1060,7 +1098,7 @@ class _RandomizerScreenState extends State<RandomizerScreen>
                                 5,
                                 (index) => GestureDetector(
                                   onTap: () {
-                                    setState(() {
+                                    bottomSheetSetState(() {
                                       ratings[locationName] = index + 1;
                                     });
                                   },
@@ -1495,20 +1533,18 @@ class _RandomizerScreenState extends State<RandomizerScreen>
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
                       child: Container(
-                        width: 32,
-                        height: 32,
+                        width: 40,
+                        height: 40,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.black.withOpacity(0.4),
-                          border: Border.all(
-                            color: const Color(0xFFAD46FF).withOpacity(0.3),
-                            width: 1.07,
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF9D00FF), Color(0xFFB300FF)],
                           ),
                         ),
                         child: const Icon(
                           Icons.arrow_back,
-                          color: Color(0xFFDAB2FF),
-                          size: 16,
+                          color: Colors.white,
+                          size: 20,
                         ),
                       ),
                     ),
@@ -1539,20 +1575,18 @@ class _RandomizerScreenState extends State<RandomizerScreen>
                     GestureDetector(
                       onTap: _showInfoPopup,
                       child: Container(
-                        width: 32,
-                        height: 32,
+                        width: 40,
+                        height: 40,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.black.withOpacity(0.4),
-                          border: Border.all(
-                            color: const Color(0xFFAD46FF).withOpacity(0.3),
-                            width: 1.07,
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF9D00FF), Color(0xFFB300FF)],
                           ),
                         ),
                         child: const Icon(
                           Icons.info_outline,
-                          color: Color(0xFFDAB2FF),
-                          size: 16,
+                          color: Colors.white,
+                          size: 20,
                         ),
                       ),
                     ),
@@ -1897,7 +1931,7 @@ class _RandomizerScreenState extends State<RandomizerScreen>
                                           favoritesOnly = value;
                                         });
                                       },
-                                      activeColor:
+                                      activeThumbColor:
                                           const Color(0xFF2B7FFF),
                                       inactiveTrackColor:
                                           Colors.grey.withOpacity(0.5),
@@ -2106,7 +2140,44 @@ class _RandomizerScreenState extends State<RandomizerScreen>
           onTap: (index) {
             if (index == 0) {
               Navigator.pop(context);
+            } else if (index == 1) {
+              Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      const SearchScreen(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    return SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(1.0, 0.0),
+                        end: Offset.zero,
+                      ).animate(CurvedAnimation(parent: animation, curve: Curves.ease)),
+                      child: child,
+                    );
+                  },
+                  transitionDuration: const Duration(milliseconds: 500),
+                ),
+              );
+            } else if (index == 2) {
+              Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      const FavoritesScreen(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    return SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(1.0, 0.0),
+                        end: Offset.zero,
+                      ).animate(CurvedAnimation(parent: animation, curve: Curves.ease)),
+                      child: child,
+                    );
+                  },
+                  transitionDuration: const Duration(milliseconds: 500),
+                ),
+              );
             }
+            // Index 3 is current screen (Randomize), no action needed
           },
         ),
       ],

@@ -755,7 +755,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _pushNotifications = value;
                     });
                   },
-                  activeColor: const Color(0xFFE12AFB),
+                  activeThumbColor: const Color(0xFFE12AFB),
                   inactiveThumbColor: Colors.grey.shade700,
                   inactiveTrackColor: Colors.grey.shade800,
                 ),
