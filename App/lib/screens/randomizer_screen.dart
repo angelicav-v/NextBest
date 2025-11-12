@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/gradient_background.dart';
 import 'search_screen.dart';
 import 'favorites_screen.dart';
+import '../widgets/share_dialog.dart';
 
 class RandomizerScreen extends StatefulWidget {
   final double latitude;
@@ -777,7 +778,15 @@ class _RandomizerScreenState extends State<RandomizerScreen>
                               child: Material(
                                 color: Colors.transparent,
                                 child: InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => ShareDialog(
+                                        placeName: currentResult['name'] ?? 'Movie',
+                                        category: 'Entertainment',
+                                      ),
+                                    );
+                                  },
                                   borderRadius: BorderRadius.circular(12),
                                   child: const Padding(
                                     padding: EdgeInsets.symmetric(vertical: 12),
@@ -1231,7 +1240,15 @@ class _RandomizerScreenState extends State<RandomizerScreen>
                               child: Material(
                                 color: Colors.transparent,
                                 child: InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => ShareDialog(
+                                        placeName: currentResult['name'] ?? 'Place',
+                                        category: selectedCategory,
+                                      ),
+                                    );
+                                  },
                                   borderRadius: BorderRadius.circular(12),
                                   child: const Padding(
                                     padding: EdgeInsets.symmetric(vertical: 12),

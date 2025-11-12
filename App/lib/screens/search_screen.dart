@@ -313,7 +313,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('Found ${filteredResults.length}', style: const TextStyle(color: Color(0xFFDAB2FF), fontSize: 12, fontWeight: FontWeight.w400)),
-                              ...filteredResults.map((result) => _buildResultCard(result)).toList(),
+                              ...filteredResults.map((result) => _buildResultCard(result)),
                               const SizedBox(height: 32),
                             ],
                           ),

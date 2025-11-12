@@ -7,6 +7,7 @@ import '../widgets/home/favorites_section.dart';
 import '../widgets/home/friend_vote_card.dart';
 import '../widgets/home/home_bottom_nav.dart';
 import '../widgets/home/info_popup.dart';
+import '../widgets/share_dialog.dart';
 import '../app_navigator.dart';
 import 'profile_screen.dart';
 import 'settings_screen.dart';
@@ -180,6 +181,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _showShareDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => ShareDialog(
+        placeName: 'My Recommendations',
+        category: _selectedCategory.isEmpty ? 'All' : _selectedCategory,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -275,6 +286,56 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 16),
                       const FriendVotesSection(),
+                      const SizedBox(height: 16),
+                      // Share Button
+                      GestureDetector(
+                        onTap: _showShareDialog,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            gradient: const LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [Color(0xFF155DFC), Color(0xFF0092B8)],
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF2B7FFF).withOpacity(0.6),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                                spreadRadius: 2,
+                              ),
+                              BoxShadow(
+                                color: const Color(0xFF2B7FFF).withOpacity(0.4),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                                spreadRadius: 0,
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.share_outlined,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'Share with Friends',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 16),
                       SizedBox(
                         width: double.infinity,
