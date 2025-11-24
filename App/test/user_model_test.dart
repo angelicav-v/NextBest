@@ -4,8 +4,6 @@ import 'package:nextbest/models/user_model.dart';
 /// Unit Tests for User Model
 /// Team 3 Member: Angelica Velez Vega
 /// Component: User Model
-/// Tests: User constructor, fromJson(), toJson() methods
-/// Focus: Positive, negative, and boundary test scenarios
 
 void main() {
   group('User Model Tests', () {
